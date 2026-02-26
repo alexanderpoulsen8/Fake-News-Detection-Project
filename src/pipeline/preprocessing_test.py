@@ -1,5 +1,6 @@
 import preprocessing as preproc
 import pandas as pd
+
 print(' --- Number of characters --- ')
 df = pd.read_csv('news_sample.csv')
 tokens = preproc.to_tokens(df['content'])
