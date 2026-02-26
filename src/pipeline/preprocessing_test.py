@@ -1,11 +1,9 @@
 import preprocessing as preproc
 import pandas as pd
-
 print(' --- Number of characters --- ')
-
 df = pd.read_csv('news_sample.csv')
 tokens = preproc.to_tokens(df['content'])
-print(f'Before any preprocessing: {preproc.get_size(tokens)}')
+print(f'After only removing whitespace: {preproc.get_size(tokens)}')
 
 df['content'] = preproc.clean_text(df['content'], tokenize_dates=True)
 tokens = preproc.to_tokens(df['content'])
