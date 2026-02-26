@@ -1,14 +1,18 @@
 import preprocessing as preproc
 import pandas as pd
 
+print(' --- Number of characters --- ')
 
-df = pd.read_csv('../news_sample.csv')
+df = pd.read_csv('news_sample.csv')
 tokens = preproc.to_tokens(df['content'])
-print(preproc.get_size(tokens))
-df['content'] = preproc.rm_punctuation(df['content'])
+print(f'Before any preprocessing: {preproc.get_size(tokens)}')
+
+df['content'] = preproc.clean_text(df['content'], tokenize_dates=True)
 tokens = preproc.to_tokens(df['content'])
-print(preproc.get_size(tokens))
+print(f'After cleaning articles: {preproc.get_size(tokens)}')
+
 tokens = preproc.rm_stopwords_from_tokens(tokens)
-print(preproc.get_size(tokens))
+print(f'After removing stopwords: {preproc.get_size(tokens)}')
+
 tokens = preproc.stem_tokens(tokens)
-print(preproc.get_size(tokens))
+print(f'After stemming tokens: {preproc.get_size(tokens)}')
