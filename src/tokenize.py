@@ -10,6 +10,7 @@ def tokenize(texts): # parameter texts is a Pandas Series
     cleaned = texts.copy()
     cleaned = cleaned.str.replace(pat=whitespace_patt, repl=r' ', regex=True)
     cleaned = cleaned.str.lower()
+    cleaned = cleaned.str.replace(pat=non_word_non_space_patt, repl='', regex=True)
     tokens = cleaned.apply(lambda x: re.split(whitespace_patt, x))
     return tokens
 
