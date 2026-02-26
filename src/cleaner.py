@@ -15,4 +15,4 @@ def tokenize(texts): # parameter texts is a Pandas Series
     return tokens
 
 df = pd.read_csv('news_sample.csv')
-print(tokenize(df['content']))
+print(tokenize(df['content'])[:100])
