@@ -8,7 +8,7 @@ FILEPATH = "C:/Users/45515/OneDrive/Desktop/Studie/2_Semester_KU/GDS/Exam/995,00
 CHUNKSIZE = 50000
 OUTPUT_PATH = "preprocessed_dataset.csv"
 cols = pd.read_csv(FILEPATH, nrows=0).columns
-# pd.DataFrame(columns=cols).to_csv(OUTPUT_PATH, index=False)
+pd.DataFrame(columns=cols).to_csv(OUTPUT_PATH, index=False)
 
 with pd.read_csv(
     FILEPATH,
@@ -20,9 +20,8 @@ with pd.read_csv(
     i = 0
     for chunk in reader:
         i += 1
-        if i < 14:
-            continue
         print(i)
         preproc_chunk = pd.DataFrame(chunk)
         preproc_chunk['content'] = pp.preprocess(preproc_chunk['content'])
         preproc_chunk.to_csv(OUTPUT_PATH, mode='a', header=False, index=False)
+print("LETS FUCKING GOOOOOOOOOOO")
