@@ -1,6 +1,8 @@
 import re
+import pandas as pd
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
+from itertools import chain
 
 def create_patterns():
     months = [r'january', r'february', r'march', r'april', r'may', r'june',
@@ -21,11 +23,11 @@ def create_patterns():
         'clean_bef_date': r'[^\w\s<>/-]',
         'date': re.compile(r'(' + r')|('.join(date_patts) + r')'),
         'non_word_non_space': re.compile(r'[^\w\s<>]'),
-        'num': re.compile(r'\d+')
+        'num': re.compile(r'\d+(st\s|nd\s|rd\s|th\s)?')
     }
     return patts
 PATTERNS = create_patterns()
-STOP_WORDS = set(stopwords.words("english")) - {"no", "nor", "not"}
+STOPWORDS = set(stopwords.words("english")) - {"no", "nor", "not"}
 STEMMER = SnowballStemmer("english")
 
 def clean_text(articles, tokenize_dates = False):
@@ -51,22 +53,23 @@ def clean_text(articles, tokenize_dates = False):
         cleaned = cleaned.str.replace(pat=PATTERNS['clean_bef_date'], repl=r'', regex=True)
         cleaned = cleaned.str.replace(pat=PATTERNS['date'], repl=r'<DATE>', regex=True)
     cleaned = cleaned.str.replace(pat=PATTERNS['non_word_non_space'], repl=r'', regex=True)
+    cleaned = cleaned.str.replace(pat=PATTERNS['num'], repl=r'<NUM> ', regex=True)
     cleaned = cleaned.str.replace(pat=PATTERNS['whitespace'], repl=r' ', regex=True)
-    cleaned = cleaned.str.replace(pat=PATTERNS['num'], repl=r'<NUM>', regex=True)
+
     return cleaned
 
 
 def to_tokens(articles): #
     '''
-    Get tokens from collection of articles
+    Get pandas Series of lists of tokens from collection of articles
 
     Parameters:
         articles - Pandas Series of longer strings
 
     Returns:
-        Pandas Series of tokens
+        Pandas Series of lists of tokens
     '''
-    return articles.str.split(PATTERNS['whitespace']).explode()
+    return articles.str.split(PATTERNS['whitespace'])
 
 
 def rm_stopwords_from_tokens(tokens):
@@ -79,9 +82,7 @@ def rm_stopwords_from_tokens(tokens):
     Returns:
         Pandas Series of tokens without stopwords
     '''
-
-    tokens = tokens.astype("category")
-    return tokens[~tokens.isin(STOP_WORDS)]
+    return tokens.apply(lambda ls: [token for token in ls if token not in STOPWORDS])
 
 def stem_tokens(tokens):
     '''
@@ -93,14 +94,19 @@ def stem_tokens(tokens):
     Returns:
         Pandas Series where stemming has been applied to every element
     '''
-
-    return tokens.map(STEMMER.stem)
+    return tokens.apply(lambda ls: [STEMMER.stem(token) for token in ls])
 
 def get_size(tokens):
     '''
     Get total number of characters of all elements in a Pandas Series
     '''
-    return tokens.str.len().sum()
+    return sum(len(token) for ls in tokens for token in ls)
+
+def encode_vocabulary(token_series):
+    vocab = pd.unique(token_series.explode())
+    cat_dtype = pd.CategoricalDtype(categories=vocab)
+    token_codes = token_series.apply(lambda ls: pd.Categorical(ls, dtype=cat_dtype).codes)
+    return token_codes
 
 def preprocess(articles):
     '''
@@ -108,10 +114,9 @@ def preprocess(articles):
     '''
     cleaned = clean_text(articles)
 
-    tokens = cleaned.str.split(PATTERNS['whitespace']).explode()
+    tokens = cleaned.str.split(PATTERNS['whitespace'])
 
-    stop_words = set(stopwords.words("english")) - {"no", "nor", "not"}
-    tokens = tokens[~tokens.isin(stop_words)]
+    tokens = tokens[~tokens.isin(STOPWORDS)]
 
     stemmer = SnowballStemmer("english")
     tokens = tokens.map(stemmer.stem)
