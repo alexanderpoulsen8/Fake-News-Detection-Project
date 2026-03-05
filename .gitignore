@@ -42,3 +42,24 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# Ignore all data by default
+data/
+
+# Re-allow directories so we can whitelist subtrees
+!data/**/
+
+# Always ignore raw (never commit big source datasets)
+data/raw/**
+
+# Allow processed outputs (these can be committed)
+!data/processed/**
+!data/processed/**/*.csv
+!data/processed/**/*.parquet
+!data/processed/**/*.json
+!data/processed/**/*.feather
+!data/processed/**/*.pkl
+
+# Keep directory placeholders
+!.gitkeep
+!data/**/.gitkeep
