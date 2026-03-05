@@ -68,6 +68,7 @@ def to_tokens(articles): #
     Returns:
         Pandas Series of lists of tokens
     '''
+    articles = articles.fillna("")
     return articles.str.split(PATTERNS['whitespace'])
 
 
@@ -107,17 +108,12 @@ def encode_vocabulary(token_series):
     token_codes = token_series.apply(lambda ls: pd.Categorical(ls, dtype=cat_dtype).codes)
     return token_codes
 
-def preprocess(articles):
+def preprocess(articles, tokenize_dates=False):
     '''
     Combined function of all functions in preprocessing module
     '''
-    cleaned = clean_text(articles)
+    cleaned = clean_text(articles, tokenize_dates=tokenize_dates)
 
-    tokens = cleaned.str.split(PATTERNS['whitespace'])
-
-    tokens = tokens[~tokens.isin(STOPWORDS)]
-
-    stemmer = SnowballStemmer("english")
-    tokens = tokens.map(stemmer.stem)
+    tokens = stem_tokens(rm_stopwords_from_tokens(to_tokens(cleaned)))
 
     return tokens
