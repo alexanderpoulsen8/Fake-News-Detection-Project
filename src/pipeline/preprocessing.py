@@ -41,8 +41,6 @@ def clean_text(articles, tokenize_dates = False):
         Cleaned articles. Removes whitespace, non word/space characters, and
         tokenizes numbers, dates (if tokenize_date = True), URLs, and emails
     '''
-
-
     cleaned = articles.copy()
     cleaned = cleaned.str.replace(pat=PATTERNS['whitespace'], repl=r' ', regex=True)
     cleaned = cleaned.str.lower()
