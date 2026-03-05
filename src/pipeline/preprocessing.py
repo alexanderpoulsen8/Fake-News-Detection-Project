@@ -2,7 +2,6 @@ import re
 import pandas as pd
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
-from itertools import chain
 
 def create_patterns():
     months = [r'january', r'february', r'march', r'april', r'may', r'june',

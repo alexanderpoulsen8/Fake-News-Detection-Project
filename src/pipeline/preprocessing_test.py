@@ -15,4 +15,3 @@ print(f'After removing stopwords: {preproc.get_size(tokens)}')
 
 tokens = preproc.stem_tokens(tokens)
 print(f'After stemming tokens: {preproc.get_size(tokens)}')
-print(tokens)
