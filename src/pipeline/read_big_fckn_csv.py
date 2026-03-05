@@ -13,14 +13,14 @@ cols = pd.read_csv(FILEPATH, nrows=0).columns
 with pd.read_csv(
     FILEPATH,
     chunksize=CHUNKSIZE,
-    engine="python",
     quotechar='"',
-    usecols=cols
+    usecols=cols,
+    low_memory=False
 ) as reader:
     i = 0
     for chunk in reader:
         i += 1
-        if i < 9:
+        if i < 14:
             continue
         print(i)
         preproc_chunk = pd.DataFrame(chunk)
