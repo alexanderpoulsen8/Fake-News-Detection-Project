@@ -6,7 +6,7 @@ import pandas as pd
 ROOT = Path(__file__).resolve().parents[2]
 df = pd.read_csv(ROOT / "news_sample.csv")
 
-df["content"] = preproc.rm_punctuation(df["content"])
+df["content"] = preproc.clean_text(df["content"])
 tokens = preproc.tokenize_series(df["content"])
 tokens = preproc.rm_stopwords(tokens)
 tokens = preproc.stem_tokens(tokens)
