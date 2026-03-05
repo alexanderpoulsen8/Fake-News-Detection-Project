@@ -1,0 +1,14 @@
+FAKE:
+unreliable
+hate
+junksci
+fake
+satire
+conspiracy
+bias
+
+TRUE:
+reliable
+political
+state
+clickbait 

@@ -1,7 +1,7 @@
 import pandas as pd
 import os
 from pathlib import Path
-
+#Script brugt til at læse csv filerne for at validere om de er splittet rigtigt
 data_folder = r'C:\Users\jespe\GDS eksamen\Fake-News-Detection-Project\Data'
 
 csv_files = [f for f in os.listdir(data_folder) if f.endswith('.csv')]
