@@ -1,8 +1,9 @@
 import re
-import nltk
 import pandas as pd
+from pandarallel import pandarallel
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
+from nltk.tokenize import WhitespaceTokenizer
 
 def create_patterns():
     months = [r'january', r'february', r'march', r'april', r'may', r'june',
@@ -77,7 +78,7 @@ def tokenize_series(texts):
     Returns: Series[list[str]] where each row is tokenized separately.
     """
     s = texts.fillna("").astype(str)
-    return s.apply(nltk.word_tokenize)
+    return s.apply(WhitespaceTokenizer().tokenize)
 
 
 def rm_stopwords(tokens_series):
@@ -103,20 +104,22 @@ def token_char_size(tokens_series):
     """
     return tokens_series.apply(lambda toks: sum(len(t) for t in toks))
 
+
+def process_tokens(tokens_series):
+    return tokens_series.apply(lambda tokens: [_STEMMER.stem(t) for t in tokens if t not in _STOP_WORDS])
+
+def preprocess(articles, tokenize_dates=True):
+    '''
+    Combined function of all functions in preprocessing module
+    '''
+    cleaned = clean_text(articles, tokenize_dates=tokenize_dates)
+    tokens_series = tokenize_series(cleaned)
+
+    return process_tokens(tokens_series)
+
 def encode_vocabulary(token_series):
     vocab = pd.unique(token_series.explode())
     cat_dtype = pd.CategoricalDtype(categories=vocab)
     token_codes = token_series.apply(lambda ls: pd.Categorical(ls, dtype=cat_dtype).codes)
     return token_codes
-
-def preprocess(articles, tokenize_dates=False):
-    '''
-    Combined function of all functions in preprocessing module
-    '''
-    cleaned = clean_text(articles, tokenize_dates=tokenize_dates)
-
-    tokens = stem_tokens(rm_stopwords(tokenize_series(cleaned)))
-
-    return tokens
-
 
