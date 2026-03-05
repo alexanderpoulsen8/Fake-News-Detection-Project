@@ -17,9 +17,9 @@ with pd.read_csv(filepath, chunksize=CHUNKSIZE, usecols=['id', 'content'], engin
             continue
         print(i)
         preprocessed_articles = pd.DataFrame({'id': chunk['id'], 'content': pp.clean_text(chunk['content'])})
-        preprocessed_articles['content'] = pp.to_tokens(preprocessed_articles['content'])
+        preprocessed_articles['content'] = pp.tokenize_series(preprocessed_articles['content'])
         bad_rows = preprocessed_articles['content'][preprocessed_articles['content'].apply(lambda x: not isinstance(x, list))]
         print(bad_rows)
-        print(pp.get_size(preprocessed_articles['content']))
+        print(pp.token_char_size(preprocessed_articles['content']))
         if i % 100 == 0:
             break

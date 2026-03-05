@@ -1,4 +1,5 @@
 import re
+import nltk
 import pandas as pd
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
@@ -25,11 +26,17 @@ def create_patterns():
         'num': re.compile(r'\d+(st\s|nd\s|rd\s|th\s)?')
     }
     return patts
-PATTERNS = create_patterns()
-STOPWORDS = set(stopwords.words("english")) - {"no", "nor", "not"}
-STEMMER = SnowballStemmer("english")
 
-def clean_text(articles, tokenize_dates = False):
+
+# Compile once
+_PATTERNS = create_patterns()
+_NON_WORD_NON_SPACE = re.compile(r"[^\w\s]")
+
+# Build once
+_STOP_WORDS = set(stopwords.words("english")) - {"no", "nor", "not"}
+_STEMMER = SnowballStemmer("english")
+
+def clean_text(articles, tokenize_dates=True):
     '''
     Takes pandas string Series as input and cleans all article elements
 
@@ -41,64 +48,60 @@ def clean_text(articles, tokenize_dates = False):
         Cleaned articles. Removes whitespace, non word/space characters, and
         tokenizes numbers, dates (if tokenize_date = True), URLs, and emails
     '''
-    cleaned = articles.copy()
-    cleaned = cleaned.str.replace(pat=PATTERNS['whitespace'], repl=r' ', regex=True)
-    cleaned = cleaned.str.lower()
-    cleaned = cleaned.str.replace(pat=PATTERNS['email'], repl=r'<EMAIL>', regex=True)
-    cleaned = cleaned.str.replace(pat=PATTERNS['url'], repl=r'<URL>', regex=True)
+    cleaned = articles.fillna("").astype(str).str.lower()
+    cleaned = cleaned.str.replace(pat=_PATTERNS['whitespace'], repl=r' ', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['email'], repl=r'<EMAIL>', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['url'], repl=r'<URL>', regex=True)
     if tokenize_dates:
-        cleaned = cleaned.str.replace(pat=PATTERNS['clean_bef_date'], repl=r'', regex=True)
-        cleaned = cleaned.str.replace(pat=PATTERNS['date'], repl=r'<DATE>', regex=True)
-    cleaned = cleaned.str.replace(pat=PATTERNS['non_word_non_space'], repl=r'', regex=True)
-    cleaned = cleaned.str.replace(pat=PATTERNS['num'], repl=r'<NUM> ', regex=True)
-    cleaned = cleaned.str.replace(pat=PATTERNS['whitespace'], repl=r' ', regex=True)
+        cleaned = cleaned.str.replace(pat=_PATTERNS['clean_bef_date'], repl=r'', regex=True)
+        cleaned = cleaned.str.replace(pat=_PATTERNS['date'], repl=r'<DATE>', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['non_word_non_space'], repl=r'', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['num'], repl=r'<NUM> ', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['whitespace'], repl=r' ', regex=True)
 
     return cleaned
 
 
-def to_tokens(articles): #
-    '''
-    Get pandas Series of lists of tokens from collection of articles
-
-    Parameters:
-        articles - Pandas Series of longer strings
-
-    Returns:
-        Pandas Series of lists of tokens
-    '''
-    articles = articles.fillna("")
-    return articles.str.split(PATTERNS['whitespace'])
+def rm_punctuation(texts):
+    """
+    texts: pandas Series (strings)
+    Returns: Series with lowercase text and punctuation removed.
+    """
+    s = texts.fillna("").astype(str).str.lower()
+    return s.str.replace(_NON_WORD_NON_SPACE, "", regex=True)
 
 
-def rm_stopwords_from_tokens(tokens):
-    '''
-    Remove stopwords from array of tokens using nltk.corpus.stopwords
+def tokenize_series(texts):
+    """
+    texts: pandas Series (strings)
+    Returns: Series[list[str]] where each row is tokenized separately.
+    """
+    s = texts.fillna("").astype(str)
+    return s.apply(nltk.word_tokenize)
 
-    Parameters:
-        tokens - Pandas Series of tokens
 
-    Returns:
-        Pandas Series of tokens without stopwords
-    '''
-    return tokens.apply(lambda ls: [token for token in ls if token not in STOPWORDS])
+def rm_stopwords(tokens_series):
+    """
+    tokens_series: Series[list[str]]
+    Returns: Series[list[str]] with stopwords removed (keeps no/nor/not).
+    """
+    return tokens_series.apply(lambda toks: [t for t in toks if t not in _STOP_WORDS])
 
-def stem_tokens(tokens):
-    '''
-    Stems pandas Series of tokens using nltk.stem.SnowBallStemmer
 
-    Paramters:
-        tokens - Pandas Series of tokens
+def stem_tokens(tokens_series):
+    """
+    tokens_series: Series[list[str]]
+    Returns: Series[list[str]] stemmed.
+    """
+    return tokens_series.apply(lambda toks: [_STEMMER.stem(t) for t in toks])
 
-    Returns:
-        Pandas Series where stemming has been applied to every element
-    '''
-    return tokens.apply(lambda ls: [STEMMER.stem(token) for token in ls])
 
-def get_size(tokens):
-    '''
-    Get total number of characters of all elements in a Pandas Series
-    '''
-    return sum(len(token) for ls in tokens for token in ls)
+def token_char_size(tokens_series):
+    """
+    tokens_series: Series[list[str]]
+    Returns: Series[int] sum of token lengths per row.
+    """
+    return tokens_series.apply(lambda toks: sum(len(t) for t in toks))
 
 def encode_vocabulary(token_series):
     vocab = pd.unique(token_series.explode())
@@ -112,6 +115,8 @@ def preprocess(articles, tokenize_dates=False):
     '''
     cleaned = clean_text(articles, tokenize_dates=tokenize_dates)
 
-    tokens = stem_tokens(rm_stopwords_from_tokens(to_tokens(cleaned)))
+    tokens = stem_tokens(rm_stopwords(tokenize_series(cleaned)))
 
     return tokens
+
+
