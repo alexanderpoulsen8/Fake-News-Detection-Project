@@ -4,7 +4,7 @@ import preprocessing as pp
 # columns
 # Unnamed, id, domain, type, url, content, scraped_at, inserted_at, updated_at, title, authors, keywords, meta_keywords, meta_description, tags, summary, source,
 
-FILEPATH = "C:/Users/45515/OneDrive/Desktop/Studie/2_Semester_KU/GDS/Exam/995,000_rows.csv"
+FILEPATH = "C:/Users/45515/OneDrive/Desktop/Studie/2_Semester_KU/GDS/Exam/data/995,000_rows.csv"
 CHUNKSIZE = 50000
 OUTPUT_PATH = "preprocessed_dataset.csv"
 cols = pd.read_csv(FILEPATH, nrows=0).columns
