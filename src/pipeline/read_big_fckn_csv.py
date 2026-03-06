@@ -4,9 +4,9 @@ from multiprocessing import Pool, cpu_count
 
 
 _FILEPATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\995,000_rows.csv"
-_CHUNKSIZE = 20000
+_CHUNKSIZE = 50000
 _OUTPUT_PATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
-_N_WORKERS = max(cpu_count() - 1, 1)
+_N_WORKERS = max(cpu_count() - 2, 1)
 
 def process_chunk(chunk):
     chunk["content"] = preprocess(chunk["content"])
