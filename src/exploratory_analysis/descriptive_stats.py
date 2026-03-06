@@ -26,4 +26,4 @@ with pd.read_csv(
         df.to_csv(_OUTPUT_PATH, mode='w', header=True, index=False)
 
 
-print("LETS FUCKING GOOOOOOOOOOO")
+print("Finished counting")

@@ -1,8 +1,9 @@
 import pandas as pd
 
-def encode_vocabulary(token_series):
-    vocab = pd.unique(token_series.explode())
+def encode_vocabulary(tokens):
+    vocab = pd.unique(tokens)
+
     cat_dtype = pd.CategoricalDtype(categories=vocab)
-    token_codes = token_series.apply(lambda ls: pd.Categorical(ls, dtype=cat_dtype).codes)
+    token_codes = tokens.apply(lambda ls: pd.Categorical(ls, dtype=cat_dtype).codes)
     return token_codes
 
