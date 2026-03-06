@@ -1,27 +1,42 @@
 import pandas as pd
-import preprocessing as pp
+from preprocessing import preprocess
+from multiprocessing import Pool, cpu_count
 
-# columns
-# Unnamed, id, domain, type, url, content, scraped_at, inserted_at, updated_at, title, authors, keywords, meta_keywords, meta_description, tags, summary, source,
 
-FILEPATH = "C:/Users/45515/OneDrive/Desktop/Studie/2_Semester_KU/GDS/Exam/data/995,000_rows.csv"
-CHUNKSIZE = 50000
-OUTPUT_PATH = "preprocessed_dataset.csv"
-cols = pd.read_csv(FILEPATH, nrows=0).columns
-pd.DataFrame(columns=cols).to_csv(OUTPUT_PATH, index=False)
+_FILEPATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\995,000_rows.csv"
+_CHUNKSIZE = 20000
+_OUTPUT_PATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
+_N_WORKERS = max(cpu_count() - 1, 1)
 
-with pd.read_csv(
-    FILEPATH,
-    chunksize=CHUNKSIZE,
-    quotechar='"',
-    usecols=cols,
-    low_memory=False
-) as reader:
-    i = 0
-    for chunk in reader:
-        i += 1
-        print(i)
-        preproc_chunk = pd.DataFrame(chunk)
-        preproc_chunk['content'] = pp.preprocess(preproc_chunk['content'])
-        preproc_chunk.to_csv(OUTPUT_PATH, mode='a', header=False, index=False)
-print("LETS FUCKING GOOOOOOOOOOO")
+def process_chunk(chunk):
+    chunk["content"] = preprocess(chunk["content"])
+    return chunk
+
+def main():
+
+    _COLS = pd.read_csv(_FILEPATH, nrows=0).columns
+    pd.DataFrame(columns=_COLS).to_csv(_OUTPUT_PATH, index=False)
+    print('Added columns to csv file')
+
+    reader = pd.read_csv(
+        _FILEPATH,
+        chunksize=_CHUNKSIZE,
+        quotechar='"',
+        usecols=_COLS,
+        low_memory=False
+    )
+
+    with Pool(_N_WORKERS) as pool:
+        print(f'Starting process using {_N_WORKERS} CPU cores')
+        for i, processed_chunk in enumerate(pool.imap(process_chunk, reader, chunksize=1), 1):
+            print(f"chunk {i} done")
+            processed_chunk.to_csv(
+                _OUTPUT_PATH,
+                mode="a",
+                header=False,
+                index=False
+            )
+
+if __name__ == "__main__":
+    main()
+    print("LETS FUCKING GOOOOOOOOOOO")
