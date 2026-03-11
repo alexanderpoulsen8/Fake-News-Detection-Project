@@ -3,7 +3,6 @@ import pandas as pd
 _FILEPATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
 _CHUNKSIZE = 50000
 _OUTPUT_PATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\vocabulary.csv"
-# _COLS = pd.read_csv(_FILEPATH, nrows=0).columns
 
 with pd.read_csv(
     _FILEPATH,
