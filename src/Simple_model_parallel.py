@@ -11,8 +11,8 @@ from multiprocessing import Pool, cpu_count
 DATA_DIR = r"D:\GDS\Fake-News-Detection-Project\data"
 TOP_K_WORDS = 10000
 
-FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias'}
-TRUE_LABELS = {'reliable', 'political', 'state', 'clickbait'}
+FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias', 'clickbait'}
+TRUE_LABELS = {'reliable', 'political', 'state'}
 
 
 def load_data(split):
