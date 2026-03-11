@@ -1,8 +1,8 @@
 import pandas as pd
 
-_FILEPATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
+_FILEPATH = r"D:\GDS\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
 _CHUNKSIZE = 50000
-_OUTPUT_PATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\vocabulary.csv"
+_OUTPUT_PATH = r"D:\GDS\Fake-News-Detection-Project\data\vocabulary.csv"
 
 with pd.read_csv(
     _FILEPATH,

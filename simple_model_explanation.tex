@@ -1,0 +1,438 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{geometry}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\geometry{margin=2.5cm}
+
+% Python code styling
+\lstdefinestyle{pythonstyle}{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue}\bfseries,
+    commentstyle=\color{gray}\itshape,
+    stringstyle=\color{red},
+    showstringspaces=false,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny\color{gray},
+    backgroundcolor=\color{gray!10}
+}
+
+\title{Simple Logistic Regression Model for Fake News Detection\\
+\large Technical Documentation}
+\author{Part 2, Task 2}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Overview}
+
+This document provides a detailed explanation of the \texttt{Simple\_model.py} implementation, which creates a baseline logistic regression classifier for binary fake news detection. The model uses a bag-of-words representation with the 10,000 most frequent words as features.
+
+\section{Model Architecture}
+
+\subsection{Binary Classification Task}
+
+The model performs binary classification where:
+\begin{itemize}
+    \item \textbf{Class 0 (FAKE)}: \texttt{unreliable}, \texttt{hate}, \texttt{junksci}, \texttt{fake}, \texttt{satire}, \texttt{conspiracy}, \texttt{bias}
+    \item \textbf{Class 1 (TRUE)}: \texttt{reliable}, \texttt{political}, \texttt{state}, \texttt{clickbait}
+\end{itemize}
+
+Let $y \in \{0, 1\}$ denote the binary label for each article.
+
+\subsection{Feature Representation}
+
+The model uses a \textbf{bag-of-words (BoW)} representation:
+
+\begin{equation}
+\mathbf{x}_i = [c_1, c_2, \ldots, c_{10000}]^\top \in \mathbb{R}^{10000}
+\end{equation}
+
+where $c_j$ is the count of the $j$-th most frequent word in document $i$. This creates a feature matrix:
+
+\begin{equation}
+\mathbf{X} \in \mathbb{R}^{n \times 10000}
+\end{equation}
+
+where $n$ is the number of documents in the dataset.
+
+\subsection{Logistic Regression Model}
+
+The logistic regression model predicts the probability of an article being TRUE (class 1):
+
+\begin{equation}
+P(y=1 | \mathbf{x}) = \sigma(\mathbf{w}^\top \mathbf{x} + b) = \frac{1}{1 + e^{-(\mathbf{w}^\top \mathbf{x} + b)}}
+\end{equation}
+
+where:
+\begin{itemize}
+    \item $\mathbf{w} \in \mathbb{R}^{10000}$ is the weight vector
+    \item $b \in \mathbb{R}$ is the bias term
+    \item $\sigma(\cdot)$ is the sigmoid function
+\end{itemize}
+
+The model is trained by minimizing the binary cross-entropy loss:
+
+\begin{equation}
+\mathcal{L}(\mathbf{w}, b) = -\frac{1}{n}\sum_{i=1}^{n} \left[ y_i \log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i) \right]
+\end{equation}
+
+where $\hat{y}_i = P(y=1 | \mathbf{x}_i)$.
+
+\section{Implementation Details}
+
+\subsection{Pipeline Overview}
+
+The implementation follows a four-stage pipeline:
+
+\begin{algorithm}
+\caption{Fake News Detection Pipeline}
+\begin{algorithmic}[1]
+\State Load train, validation, and test datasets
+\State Build vocabulary $V$ of top 10,000 words from training data
+\State Create feature matrices $\mathbf{X}_{\text{train}}, \mathbf{X}_{\text{val}}, \mathbf{X}_{\text{test}}$
+\State Train logistic regression model on $(\mathbf{X}_{\text{train}}, \mathbf{y}_{\text{train}})$
+\State Evaluate on validation and test sets
+\State Save trained model and vocabulary
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Function Breakdown}
+
+\subsubsection{1. Data Loading: \texttt{load\_data(split)}}
+
+\textbf{Purpose:} Load preprocessed data and create binary labels.
+
+\textbf{Input:} 
+\begin{itemize}
+    \item \texttt{split}: String indicating which split to load (\texttt{'train'}, \texttt{'val'}, or \texttt{'test'})
+\end{itemize}
+
+\textbf{Output:}
+\begin{itemize}
+    \item DataFrame with columns: \texttt{content} (preprocessed tokens) and \texttt{label} (0 or 1)
+\end{itemize}
+
+\textbf{Process:}
+\begin{enumerate}
+    \item Read CSV file containing preprocessed articles
+    \item Remove rows with missing \texttt{content} or \texttt{type}
+    \item Map article types to binary labels using the grouping scheme
+    \item Filter out articles that don't belong to either class
+\end{enumerate}
+
+\begin{lstlisting}[style=pythonstyle, caption={Data Loading Function}]
+def load_data(split):
+    df = pd.read_csv(f"{DATA_DIR}/{split}.csv", 
+                     usecols=['content', 'type'])
+    df = df.dropna(subset=['content', 'type'])
+    
+    df['label'] = df['type'].apply(
+        lambda x: 0 if x in FAKE_LABELS 
+                 else (1 if x in TRUE_LABELS else -1)
+    )
+    df = df[df['label'] != -1]
+    
+    return df[['content', 'label']]
+\end{lstlisting}
+
+\subsubsection{2. Vocabulary Building: \texttt{build\_vocabulary(train\_df)}}
+
+\textbf{Purpose:} Extract the 10,000 most frequent words from training data.
+
+\textbf{Input:}
+\begin{itemize}
+    \item \texttt{train\_df}: Training dataset DataFrame
+    \item \texttt{load\_if\_exists}: Boolean flag to load cached vocabulary if available
+\end{itemize}
+
+\textbf{Output:}
+\begin{itemize}
+    \item \texttt{vocab}: Set of 10,000 most frequent words
+    \item \texttt{word\_counter}: Counter object with word frequencies (or None if loaded from cache)
+\end{itemize}
+
+\textbf{Process:}
+\begin{enumerate}
+    \item Check if pre-computed vocabulary exists; if so, load and return it
+    \item Otherwise, iterate through all training documents
+    \item Parse token lists from string representation
+    \item Count word frequencies using a Counter
+    \item Select top 10,000 most frequent words
+    \item Save vocabulary to disk for future use
+\end{enumerate}
+
+\textbf{Mathematical Formulation:}
+
+Let $D_{\text{train}}$ be the set of training documents, and $w_{ij}$ be the $j$-th word in document $i$. The word frequency is:
+
+\begin{equation}
+f(w) = \sum_{i=1}^{|D_{\text{train}}|} \sum_{j=1}^{|d_i|} \mathbb{1}[w_{ij} = w]
+\end{equation}
+
+The vocabulary is then:
+
+\begin{equation}
+V = \{w_1, w_2, \ldots, w_{10000}\} \text{ where } f(w_1) \geq f(w_2) \geq \cdots \geq f(w_{10000})
+\end{equation}
+
+\begin{lstlisting}[style=pythonstyle, caption={Vocabulary Building Function}]
+def build_vocabulary(train_df, load_if_exists=True):
+    vocab_file = f"{DATA_DIR}/top_{TOP_K_WORDS}_vocab.pkl"
+    
+    if load_if_exists and pd.io.common.file_exists(vocab_file):
+        with open(vocab_file, 'rb') as f:
+            return pickle.load(f), None
+    
+    word_counter = Counter()
+    for content in train_df['content']:
+        try:
+            tokens = ast.literal_eval(content)
+            word_counter.update(tokens)
+        except:
+            continue
+    
+    vocab = set([word for word, _ 
+                 in word_counter.most_common(TOP_K_WORDS)])
+    
+    with open(vocab_file, 'wb') as f:
+        pickle.dump(vocab, f)
+    
+    return vocab, word_counter
+\end{lstlisting}
+
+\subsubsection{3. Feature Creation: \texttt{create\_features(df, vocab)}}
+
+\textbf{Purpose:} Convert documents into bag-of-words feature vectors.
+
+\textbf{Input:}
+\begin{itemize}
+    \item \texttt{df}: DataFrame containing documents
+    \item \texttt{vocab}: Set of vocabulary words
+\end{itemize}
+
+\textbf{Output:}
+\begin{itemize}
+    \item \texttt{X}: Feature matrix of shape $(n, 10000)$ where $n$ is the number of documents
+\end{itemize}
+
+\textbf{Process:}
+\begin{enumerate}
+    \item Create a mapping from words to column indices
+    \item Initialize a zero matrix of shape $(n, 10000)$
+    \item For each document:
+    \begin{itemize}
+        \item Parse the token list
+        \item Count occurrences of each word
+        \item For words in vocabulary, set the corresponding column to the count
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Mathematical Formulation:}
+
+For document $i$ with tokens $\{w_{i1}, w_{i2}, \ldots, w_{im}\}$, the feature vector is:
+
+\begin{equation}
+x_{ij} = \sum_{k=1}^{m} \mathbb{1}[w_{ik} = v_j]
+\end{equation}
+
+where $v_j$ is the $j$-th word in the vocabulary $V$.
+
+\begin{lstlisting}[style=pythonstyle, caption={Feature Creation Function}]
+def create_features(df, vocab):
+    vocab_to_idx = {word: idx 
+                    for idx, word in enumerate(sorted(vocab))}
+    X = np.zeros((len(df), len(vocab)), dtype=np.int32)
+    
+    for i, content in enumerate(df['content']):
+        try:
+            tokens = ast.literal_eval(content)
+            for word, count in Counter(tokens).items():
+                if word in vocab_to_idx:
+                    X[i, vocab_to_idx[word]] = count
+        except:
+            continue
+    
+    return X
+\end{lstlisting}
+
+\subsubsection{4. Main Pipeline: \texttt{main()}}
+
+\textbf{Purpose:} Orchestrate the entire training and evaluation pipeline.
+
+\textbf{Process:}
+\begin{enumerate}
+    \item \textbf{Load Data:} Load train, validation, and test splits
+    \item \textbf{Build Vocabulary:} Extract top 10,000 words from training data
+    \item \textbf{Create Features:} Convert all splits to feature matrices
+    \item \textbf{Train Model:} Fit logistic regression on training data
+    \item \textbf{Validate:} Evaluate on validation set
+    \item \textbf{Test:} Evaluate on test set (final performance)
+    \item \textbf{Save:} Persist trained model and vocabulary
+\end{enumerate}
+
+\begin{lstlisting}[style=pythonstyle, caption={Main Pipeline}]
+def main():
+    # Load data
+    train_df = load_data('train')
+    val_df = load_data('val')
+    test_df = load_data('test')
+    
+    # Build vocabulary from training data only
+    vocab, word_counter = build_vocabulary(train_df)
+    
+    # Create feature matrices
+    X_train = create_features(train_df, vocab)
+    y_train = train_df['label'].values
+    
+    X_val = create_features(val_df, vocab)
+    y_val = val_df['label'].values
+    
+    X_test = create_features(test_df, vocab)
+    y_test = test_df['label'].values
+    
+    # Train logistic regression
+    model = LogisticRegression(max_iter=1000, random_state=42)
+    model.fit(X_train, y_train)
+    
+    # Evaluate on validation set
+    y_val_pred = model.predict(X_val)
+    print(f"Val F1: {f1_score(y_val, y_val_pred):.4f}")
+    
+    # Evaluate on test set
+    y_test_pred = model.predict(X_test)
+    print(f"Test F1: {f1_score(y_test, y_test_pred):.4f}")
+    
+    # Save model
+    with open(f"{DATA_DIR}/logistic_model.pkl", 'wb') as f:
+        pickle.dump(model, f)
+\end{lstlisting}
+
+\section{Hyperparameters}
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|l|p{7cm}|}
+\hline
+\textbf{Parameter} & \textbf{Value} & \textbf{Description} \\
+\hline
+Vocabulary Size & 10,000 & Number of most frequent words used as features \\
+\hline
+Solver & lbfgs & Limited-memory BFGS optimization algorithm \\
+\hline
+Max Iterations & 1,000 & Maximum number of iterations for convergence \\
+\hline
+Random State & 42 & Seed for reproducibility \\
+\hline
+Feature Type & Word Counts & Raw counts (no TF-IDF weighting) \\
+\hline
+\end{tabular}
+\caption{Model Hyperparameters}
+\end{table}
+
+\section{Data Splits}
+
+The dataset is split using a deterministic hash-based approach:
+
+\begin{itemize}
+    \item \textbf{Training Set:} 80\% of data ($\sim$800,000 samples)
+    \item \textbf{Validation Set:} 10\% of data ($\sim$100,000 samples)
+    \item \textbf{Test Set:} 10\% of data ($\sim$100,000 samples)
+\end{itemize}
+
+The splits are stratified to maintain class balance across all sets.
+
+\section{Evaluation Metrics}
+
+The model is evaluated using:
+
+\begin{itemize}
+    \item \textbf{F1 Score:} Harmonic mean of precision and recall
+    \begin{equation}
+    F1 = 2 \cdot \frac{\text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}
+    \end{equation}
+    
+    \item \textbf{Accuracy:} Proportion of correct predictions
+    \begin{equation}
+    \text{Accuracy} = \frac{\text{TP} + \text{TN}}{\text{TP} + \text{TN} + \text{FP} + \text{FN}}
+    \end{equation}
+    
+    \item \textbf{Classification Report:} Per-class precision, recall, and F1 scores
+\end{itemize}
+
+where TP = True Positives, TN = True Negatives, FP = False Positives, FN = False Negatives.
+
+\section{Key Design Decisions}
+
+\subsection{Why Bag-of-Words?}
+
+\begin{itemize}
+    \item \textbf{Simplicity:} Easy to implement and interpret
+    \item \textbf{Baseline:} Provides a simple baseline for comparison with advanced models
+    \item \textbf{Efficiency:} Fast to compute and train
+\end{itemize}
+
+\subsection{Why 10,000 Words?}
+
+\begin{itemize}
+    \item \textbf{Coverage:} Captures most informative words while avoiding noise
+    \item \textbf{Computational Efficiency:} Keeps feature space manageable
+    \item \textbf{Generalization:} Reduces overfitting compared to using all words
+\end{itemize}
+
+\subsection{Why No TF-IDF?}
+
+The assignment explicitly states: ``You do not need to apply TF-IDF weighting to the features.'' This keeps the baseline simple and allows for easier comparison when TF-IDF is added later.
+
+\subsection{Why Training Data Only for Vocabulary?}
+
+Building vocabulary from training data only prevents \textbf{data leakage}. If we used validation or test data, the model would have indirect access to information from those sets, leading to overly optimistic performance estimates.
+
+\section{Limitations and Future Improvements}
+
+\subsection{Current Limitations}
+
+\begin{enumerate}
+    \item \textbf{No Word Order:} Bag-of-words ignores word sequence and context
+    \item \textbf{No Semantic Understanding:} Words are treated as independent features
+    \item \textbf{Sparse Representation:} Most feature values are zero (inefficient)
+    \item \textbf{Fixed Vocabulary:} Cannot handle new words at test time
+\end{enumerate}
+
+\subsection{Potential Improvements}
+
+\begin{enumerate}
+    \item \textbf{TF-IDF Weighting:} Down-weight common words, up-weight rare informative words
+    \item \textbf{N-grams:} Capture local word order (bigrams, trigrams)
+    \item \textbf{Word Embeddings:} Use pre-trained embeddings (Word2Vec, GloVe)
+    \item \textbf{Deep Learning:} LSTM, CNN, or Transformer-based models
+    \item \textbf{Meta-data Features:} Include domain, author, publication date (Part 2, Task 3)
+\end{enumerate}
+
+\section{Expected Performance}
+
+According to the assignment guidelines:
+\begin{itemize}
+    \item \textbf{Training Time:} Should take no more than 5 minutes on a modern laptop
+    \item \textbf{Expected F1 Score:} Approximately 94\% on the test set
+    \item Note: Actual performance may vary based on data splitting and label grouping decisions
+\end{itemize}
+
+\section{Conclusion}
+
+This implementation provides a clean, minimal baseline for fake news detection using logistic regression with bag-of-words features. The modular design allows for easy extension with additional features, different models, or preprocessing techniques in subsequent tasks.
+
+\end{document}

@@ -2,10 +2,9 @@ import pandas as pd
 from preprocessing import preprocess
 from multiprocessing import Pool, cpu_count
 
-
-_FILEPATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\995,000_rows.csv"
+_FILEPATH = r"D:\GDS\Fake-News-Detection-Project\data\995,000_rows.csv"
 _CHUNKSIZE = 20000
-_OUTPUT_PATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
+_OUTPUT_PATH = r"D:\GDS\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
 _N_WORKERS = max(cpu_count() - 1, 1)
 
 def process_chunk(chunk):
