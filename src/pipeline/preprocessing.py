@@ -3,6 +3,7 @@ import nltk
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 from nltk.tokenize import WhitespaceTokenizer
+import pandas as pd
 
 def create_patterns():
     months = [r'january', r'february', r'march', r'april', r'may', r'june',
