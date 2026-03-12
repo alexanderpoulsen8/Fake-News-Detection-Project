@@ -14,7 +14,7 @@ from sklearn.metrics import (
 LIAR_TEST_PATH = Path("data/liar/test.tsv")
 MODEL_PATH = Path("data/models/advanced_model.joblib")
 RESULTS_PATH = Path("results/advanced_model_liar_metrics.txt")
-CONFUSION_PATH = Path("results/advanced_model_liar_confusion_matrix.csv")
+CONFUSION_PATH = Path("results/$advanced_model_liar_confusion_matrix.csv")
 
 # LIAR columns:
 # 0: id
