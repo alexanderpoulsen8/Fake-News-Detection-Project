@@ -49,17 +49,22 @@ data/
 # Re-allow directories so we can whitelist subtrees
 !data/**/
 
-# Always ignore raw
+# Keep placeholders (so folder structure is committed)
+!.gitkeep
+!data/**/.gitkeep
+!data/**/README.md
+
+# Never commit raw datasets
 data/raw/**
 
-# Allow processed outputs
+# ...except the placeholder
+!data/raw/.gitkeep
+!data/raw/README.md
+
+# Allow committing processed outputs
 !data/processed/**
 !data/processed/**/*.csv
 !data/processed/**/*.parquet
 !data/processed/**/*.json
 !data/processed/**/*.feather
 !data/processed/**/*.pkl
-
-# Keep .gitkeep
-!.gitkeep
-!data/**/.gitkeep

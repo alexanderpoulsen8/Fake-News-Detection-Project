@@ -1,8 +1,8 @@
 import os
 import duckdb
 
-INPUT  = r"/Users/alexanderpoulsen/Downloads/995,000_rows.csv"
-OUTDIR = r"/Users/alexanderpoulsen/Desktop/gds_proj/Fake-News-Detection-Project/"
+INPUT  = r"D:\GDS\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
+OUTDIR = r"D:\GDS\Fake-News-Detection-Project\data"
 SALT   = "v1"          # skift til "v2" for nyt split når vi tiløjer mere data eller prøver det størresæt
 DELIM  = ","           # eller ";" er ikke lige sikker på filens struktur
 
