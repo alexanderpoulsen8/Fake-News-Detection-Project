@@ -11,15 +11,15 @@ from sklearn.metrics import (
     recall_score,
 )
 
-
+TRAIN_PATH = Path("data/train.csv")
+VAL_PATH = Path("data/val.csv")
 TEST_PATH = Path("data/test.csv")
 MODEL_PATH = Path("data/models/advanced_model.joblib")
-RESULTS_PATH = Path("results/advanced_model_test_metrics.txt")
-CONFUSION_PATH = Path("results/advanced_model_confusion_matrix.csv")
-
+RESULTS_PATH = Path("data/results/advanced_model_full_evaluation.txt")
 
 FAKE_LABELS = {
-    "fake", "conspiracy", "hate", "junksci", "clickbait", "unreliable", "bias", "satire", "political"
+    "fake", "conspiracy", "hate", "junksci", "clickbait",
+    "unreliable", "bias", "satire", "political"
 }
 
 REAL_LABELS = {
@@ -51,60 +51,120 @@ def prepare_df(df, text_col="content", label_col="type"):
     return df
 
 
+def evaluate_split(model, df, split_name, text_col="content"):
+    X = df[text_col].astype(str)
+    y = df["label"]
+
+    y_pred = model.predict(X)
+
+    metrics = {
+        "f1": f1_score(y, y_pred),
+        "precision": precision_score(y, y_pred),
+        "recall": recall_score(y, y_pred),
+        "accuracy": accuracy_score(y, y_pred),
+        "report": classification_report(y, y_pred),
+        "confusion_matrix": confusion_matrix(y, y_pred),
+        "support": len(df),
+    }
+    return metrics
+
+
+def diagnose_fit(train_f1, val_f1, test_f1):
+    diagnosis = []
+
+    train_val_gap = train_f1 - val_f1
+    train_test_gap = train_f1 - test_f1
+
+    if train_f1 < 0.85 and val_f1 < 0.85 and test_f1 < 0.85:
+        diagnosis.append(
+            "Possible underfitting: train, validation, and test F1 are all relatively low."
+        )
+
+    if train_val_gap > 0.03 or train_test_gap > 0.03:
+        diagnosis.append(
+            "Possible overfitting: training F1 is noticeably higher than validation/test F1."
+        )
+
+    if abs(train_f1 - val_f1) <= 0.02 and abs(train_f1 - test_f1) <= 0.02:
+        diagnosis.append(
+            "No strong sign of classic overfitting: train, validation, and test F1 are fairly close."
+        )
+
+    if not diagnosis:
+        diagnosis.append(
+            "No obvious simple diagnosis from F1 gaps alone. Check class-wise precision/recall and confusion matrices."
+        )
+
+    return diagnosis
+
+
+def format_split_output(split_name, metrics):
+    cm = metrics["confusion_matrix"]
+    return (
+        f"{split_name} RESULTS\n"
+        f"{'-' * 60}\n"
+        f"Rows: {metrics['support']}\n"
+        f"F1: {metrics['f1']:.4f}\n"
+        f"Precision: {metrics['precision']:.4f}\n"
+        f"Recall: {metrics['recall']:.4f}\n"
+        f"Accuracy: {metrics['accuracy']:.4f}\n\n"
+        f"Classification report:\n{metrics['report']}\n"
+        f"Confusion matrix:\n{cm}\n\n"
+    )
+
+
 def main():
-    print("Loading test data...")
-    test_df = pd.read_csv(TEST_PATH, low_memory=False)
-
-    text_col = "content"
-    label_col = "type"
-
-    test_df = prepare_df(test_df, text_col=text_col, label_col=label_col)
-
-    X_test = test_df[text_col].astype(str)
-    y_test = test_df["label"]
+    print("Loading data...")
+    train_df = prepare_df(pd.read_csv(TRAIN_PATH, low_memory=False))
+    val_df = prepare_df(pd.read_csv(VAL_PATH, low_memory=False))
+    test_df = prepare_df(pd.read_csv(TEST_PATH, low_memory=False))
 
     print("Loading trained model...")
     model = joblib.load(MODEL_PATH)
 
-    print("Predicting on test set...")
-    y_pred = model.predict(X_test)
+    print("Evaluating TRAIN...")
+    train_metrics = evaluate_split(model, train_df, "TRAIN")
 
-    test_f1 = f1_score(y_test, y_pred)
-    test_precision = precision_score(y_test, y_pred)
-    test_recall = recall_score(y_test, y_pred)
-    test_accuracy = accuracy_score(y_test, y_pred)
-    report = classification_report(y_test, y_pred)
+    print("Evaluating VAL...")
+    val_metrics = evaluate_split(model, val_df, "VAL")
 
-    cm = confusion_matrix(y_test, y_pred)
+    print("Evaluating TEST...")
+    test_metrics = evaluate_split(model, test_df, "TEST")
 
-    print(f"Test F1: {test_f1:.4f}")
-    print(f"Test Precision: {test_precision:.4f}")
-    print(f"Test Recall: {test_recall:.4f}")
-    print(f"Test Accuracy: {test_accuracy:.4f}")
-    print(report)
-    print("Confusion matrix:")
-    print(cm)
+    diagnosis = diagnose_fit(
+        train_metrics["f1"],
+        val_metrics["f1"],
+        test_metrics["f1"],
+    )
+
+    print("\n" + format_split_output("TRAIN", train_metrics))
+    print(format_split_output("VAL", val_metrics))
+    print(format_split_output("TEST", test_metrics))
+
+    print("FIT DIAGNOSIS")
+    print("-" * 60)
+    for line in diagnosis:
+        print(f"- {line}")
 
     RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)
     with open(RESULTS_PATH, "w", encoding="utf-8") as f:
-        f.write("Advanced model test-set evaluation\n\n")
+        f.write("ADVANCED MODEL FULL EVALUATION\n")
+        f.write("=" * 60 + "\n\n")
         f.write(f"Model path: {MODEL_PATH}\n")
+        f.write(f"Train path: {TRAIN_PATH}\n")
+        f.write(f"Val path: {VAL_PATH}\n")
         f.write(f"Test path: {TEST_PATH}\n\n")
-        f.write(f"F1: {test_f1:.4f}\n")
-        f.write(f"Precision: {test_precision:.4f}\n")
-        f.write(f"Recall: {test_recall:.4f}\n")
-        f.write(f"Accuracy: {test_accuracy:.4f}\n\n")
-        f.write(report)
 
-    cm_df = pd.DataFrame(
-        cm,
-        index=["true_reliable", "true_fake"],
-        columns=["pred_reliable", "pred_fake"]
-    )
-    cm_df.to_csv(CONFUSION_PATH, index=True)
+        f.write(format_split_output("TRAIN", train_metrics))
+        f.write(format_split_output("VAL", val_metrics))
+        f.write(format_split_output("TEST", test_metrics))
 
-    print(f"Saved metrics to {RESULTS_PATH}")
-    print(f"Saved confusion matrix to {CONFUSION_PATH}")
+        f.write("FIT DIAGNOSIS\n")
+        f.write("-" * 60 + "\n")
+        for line in diagnosis:
+            f.write(f"- {line}\n")
+
+    print(f"\nSaved full evaluation to {RESULTS_PATH}")
 
 
 if __name__ == "__main__":
