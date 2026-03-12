@@ -1,10 +1,14 @@
 import pandas as pd
 from preprocessing import preprocess
 from multiprocessing import Pool, cpu_count
+from pathlib import Path
 
-_FILEPATH = r"D:\GDS\Fake-News-Detection-Project\data\995,000_rows.csv"
+StartPath = Path.cwd()
+_OUTPUT_PATH = StartPath / "data" / "preprocessed_dataset.csv"
+
+_FILEPATH = StartPath / "data" / "995,000_rows.csv"
+
 _CHUNKSIZE = 20000
-_OUTPUT_PATH = r"D:\GDS\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
 _N_WORKERS = max(cpu_count() - 1, 1)
 
 def process_chunk(chunk):

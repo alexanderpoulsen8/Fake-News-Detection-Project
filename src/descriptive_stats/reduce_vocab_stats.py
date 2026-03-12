@@ -1,9 +1,10 @@
 import pandas as pd
-import exploratory_data_analysis as eda
+from pathlib import Path
 
-_VOCAB_FILEPATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\vocabulary.csv"
-_PROCESSED_FILEPATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\preprocessed_dataset.csv"
-_OUTPUT_PATH = r"C:\Users\45515\OneDrive\Desktop\Studie\2_Semester_KU\GDS\Exam\Fake-News-Detection-Project\data\vocabulary_stats.csv"
+StartPath = Path.cwd()
+_VOCAB_FILEPATH = StartPath / "data" / "vocabulary.csv"
+_PROCESSED_FILEPATH = StartPath / "data" / "preprocessed_dataset.csv"
+_OUTPUT_PATH = StartPath / "data" / "vocabulary_stats.csv"
 _CHUNKSIZE = 50000
 
 types = [

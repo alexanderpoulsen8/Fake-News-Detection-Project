@@ -6,8 +6,11 @@ from sklearn.metrics import classification_report, f1_score
 from collections import Counter
 import ast
 import pickle
+from pathlib import Path
 
-DATA_DIR = r"D:\GDS\Fake-News-Detection-Project\data"
+StartPath = Path.cwd()
+_DATA_DIR = StartPath / "data"
+
 TOP_K_WORDS = 10000
 
 FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias'}
