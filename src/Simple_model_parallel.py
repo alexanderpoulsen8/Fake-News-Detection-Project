@@ -14,8 +14,8 @@ DATA_DIR = StartPath / "data"
 
 TOP_K_WORDS = 10000
 
-FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias'}
-TRUE_LABELS = {'reliable', 'political', 'state', 'clickbait'}
+FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias', 'political', 'state', 'clickbait'}
+TRUE_LABELS = {'reliable'}
 
 
 def load_data(split):
@@ -144,7 +144,15 @@ def main(use_parallel=True, n_workers=None):
     y_test = test_df['label'].values
     
     print("\nTraining logistic regression...")
-    model = LogisticRegression(max_iter=5000, random_state=42, verbose=1, n_jobs=-1)
+    model = LogisticRegression(
+        C=0.5,
+        class_weight='balanced',
+        solver='lbfgs',
+        max_iter=5000,
+        random_state=42,
+        verbose=1,
+        n_jobs=-1
+    )
     model.fit(X_train, y_train)
     
     print("\nValidation Results:")
