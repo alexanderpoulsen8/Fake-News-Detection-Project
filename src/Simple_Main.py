@@ -14,5 +14,4 @@
 
 #3 Datasplit.py( input data path)
 
-#4 Run model script (input data path and top k words)
-    # expect f1 score approx 97
+#4 Run advanced model script (input data path and top k words)''
