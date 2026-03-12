@@ -9,7 +9,7 @@ import pickle
 from pathlib import Path
 
 StartPath = Path.cwd()
-_DATA_DIR = StartPath / "data"
+DATA_DIR = StartPath / "data"
 
 TOP_K_WORDS = 10000
 
@@ -31,32 +31,25 @@ def load_data(split):
     return df[['content', 'label']]
 
 
-def build_vocabulary(train_df, load_if_exists=True):
-    """Extract top K most frequent words from training data."""
-    vocab_file = f"{DATA_DIR}/top_{TOP_K_WORDS}_vocab.pkl"
+def load_vocabulary():
+    """Load pre-built vocabulary from pickle file.
     
-    if load_if_exists and pd.io.common.file_exists(vocab_file):
-        print(f"Loading pre-computed vocabulary from {vocab_file}...")
-        with open(vocab_file, 'rb') as f:
-            return pickle.load(f), None
+    Note: Vocabulary must be built separately using scripts/build_vocab_from_stats.py
+    """
+    vocab_file = DATA_DIR / f"top_{TOP_K_WORDS}_vocab.pkl"
     
-    print(f"Building vocabulary (top {TOP_K_WORDS} words)...")
-    word_counter = Counter()
+    if not vocab_file.exists():
+        raise FileNotFoundError(
+            f"Vocabulary file not found: {vocab_file}\n"
+            f"Please run scripts/build_vocab_from_stats.py first to build the vocabulary."
+        )
     
-    for content in train_df['content']:
-        try:
-            tokens = ast.literal_eval(content) if isinstance(content, str) else []
-            word_counter.update(tokens)
-        except:
-            continue
+    print(f"Loading vocabulary from {vocab_file}...")
+    with open(vocab_file, 'rb') as f:
+        vocab = pickle.load(f)
     
-    vocab = set([word for word, _ in word_counter.most_common(TOP_K_WORDS)])
-    
-    print(f"Saving vocabulary to {vocab_file}...")
-    with open(vocab_file, 'wb') as f:
-        pickle.dump(vocab, f)
-    
-    return vocab, word_counter
+    print(f"Loaded {len(vocab)} words")
+    return vocab
 
 
 def create_features(df, vocab):
@@ -85,7 +78,7 @@ def main():
     val_df = load_data('val')
     test_df = load_data('test')
     
-    vocab, word_counter = build_vocabulary(train_df)
+    vocab = load_vocabulary()
     
     X_train = create_features(train_df, vocab)
     y_train = train_df['label'].values
@@ -110,10 +103,8 @@ def main():
     print(f"F1 Score: {f1_score(y_test, y_test_pred):.4f}")
     print(classification_report(y_test, y_test_pred, target_names=['FAKE', 'TRUE']))
     
-    with open(f"{DATA_DIR}/logistic_model.pkl", 'wb') as f:
+    with open(DATA_DIR / "logistic_model.pkl", 'wb') as f:
         pickle.dump(model, f)
-    with open(f"{DATA_DIR}/vocab.pkl", 'wb') as f:
-        pickle.dump(vocab, f)
     
     print("\nModel saved!")
 
