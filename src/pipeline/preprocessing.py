@@ -1,9 +1,9 @@
 import re
-import pandas as pd
-from pandarallel import pandarallel
+import nltk
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 from nltk.tokenize import WhitespaceTokenizer
+import pandas as pd
 
 def create_patterns():
     months = [r'january', r'february', r'march', r'april', r'may', r'june',
@@ -78,7 +78,7 @@ def tokenize_series(texts):
     Returns: Series[list[str]] where each row is tokenized separately.
     """
     s = texts.fillna("").astype(str)
-    return s.apply(WhitespaceTokenizer().tokenize)
+    return s.apply(nltk.word_tokenize)
 
 
 def rm_stopwords(tokens_series):
@@ -123,3 +123,9 @@ def encode_vocabulary(token_series):
     token_codes = token_series.apply(lambda ls: pd.Categorical(ls, dtype=cat_dtype).codes)
     return token_codes
 
+def preprocess_for_vectorizer(articles, tokenize_dates=True):
+    """
+    Clean text for TF-IDF / vectorizer-based models.
+    Returns a pandas Series of cleaned strings.
+    """
+    return clean_text(articles, tokenize_dates=tokenize_dates)
