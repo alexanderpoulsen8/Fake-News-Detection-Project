@@ -1,16 +1,21 @@
-import pandas as pd
-import preprocessing as preproc
-from pathlib import Path
+import preprocessing as pp
 import pandas as pd
 
-ROOT = Path(__file__).resolve().parents[2]
-df = pd.read_csv(ROOT / "news_sample.csv")
+print(' --- Number of characters --- ')
+df = pd.read_csv('news_sample.csv')
+tokens = pp.tokenize_series(df['content'])
+print(f'After only removing whitespace: {pp.token_char_size(tokens)}')
 
-df["content"] = preproc.clean_text(df["content"])
-tokens = preproc.tokenize_series(df["content"])
-tokens = preproc.rm_stopwords(tokens)
-tokens = preproc.stem_tokens(tokens)
+df['content'] = pp.clean_text(df['content'], tokenize_dates=True)
+tokens = pp.tokenize_series(df['content'])
+print(f'After cleaning articles: {pp.token_char_size(tokens)}')
 
-print("rows:", len(df))
-print("total tokens:", tokens.apply(len).sum())
-print("total token chars:", preproc.token_char_size(tokens).sum())
+tokens = pp.rm_stopwords(tokens)
+print(f'After removing stopwords: {pp.token_char_size(tokens)}')
+
+tokens = pp.stem_tokens(tokens)
+print(f'After stemming tokens: {pp.token_char_size(tokens)}')
+
+df = pd.read_csv('news_sample.csv')
+tokens = pp.preprocess(df['content'], tokenize_dates=True)
+print(f'After using combined preprocess function: {pp.token_char_size(tokens)}')
