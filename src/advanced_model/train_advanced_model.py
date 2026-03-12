@@ -13,7 +13,11 @@ VAL_PATH = Path("data/val.csv")
 MODEL_PATH = Path("data/models/advanced_model.joblib")
 RESULTS_PATH = Path("data/results/advanced_model_metrics.txt")
 
-SAMPLE_SIZE = 100000  # set to None to use all of train.csv
+SAMPLE_SIZE = 100000
+MAX_FEATURES = 30000
+MIN_DF = 5
+NGRAM_RANGE = (1, 2)
+C_VALUE = 0.5
 
 FAKE_LABELS = {
     "fake", "conspiracy", "hate", "junksci", "clickbait", "unreliable", "bias", "satire", "political"
@@ -75,14 +79,14 @@ def main():
 
     model = Pipeline([
         ("tfidf", TfidfVectorizer(
-            max_features=30000,
-            min_df=5,
-            ngram_range=(1, 2),
+            max_features=MAX_FEATURES,
+            min_df=MIN_DF,
+            ngram_range=NGRAM_RANGE,
             sublinear_tf=True,
             smooth_idf=True,
             stop_words="english"
         )),
-        ("clf", LinearSVC(C=0.5, random_state=42))
+        ("clf", LinearSVC(C=C_VALUE, random_state=42))
     ])
 
     print("Fitting model...")
