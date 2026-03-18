@@ -37,7 +37,7 @@ _NON_WORD_NON_SPACE = re.compile(r"[^\w\s]")
 _STOP_WORDS = set(stopwords.words("english")) - {"no", "nor", "not"}
 _STEMMER = SnowballStemmer("english")
 
-def clean_text(articles, tokenize_dates=True):
+def clean_text(articles):
     '''
     Takes pandas string Series as input and cleans all article elements
 
@@ -53,9 +53,8 @@ def clean_text(articles, tokenize_dates=True):
     cleaned = cleaned.str.replace(pat=_PATTERNS['whitespace'], repl=r' ', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['email'], repl=r'<EMAIL>', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['url'], repl=r'<URL>', regex=True)
-    if tokenize_dates:
-        cleaned = cleaned.str.replace(pat=_PATTERNS['clean_bef_date'], repl=r'', regex=True)
-        cleaned = cleaned.str.replace(pat=_PATTERNS['date'], repl=r'<DATE>', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['clean_bef_date'], repl=r'', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['date'], repl=r'<DATE>', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['non_word_non_space'], repl=r'', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['num'], repl=r'<NUM> ', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['whitespace'], repl=r' ', regex=True)
@@ -123,9 +122,9 @@ def encode_vocabulary(token_series):
     token_codes = token_series.apply(lambda ls: pd.Categorical(ls, dtype=cat_dtype).codes)
     return token_codes
 
-def preprocess_for_vectorizer(articles, tokenize_dates=True):
+def preprocess_for_vectorizer(articles):
     """
     Clean text for TF-IDF / vectorizer-based models.
     Returns a pandas Series of cleaned strings.
     """
-    return clean_text(articles, tokenize_dates=tokenize_dates)
+    return clean_text(articles)
