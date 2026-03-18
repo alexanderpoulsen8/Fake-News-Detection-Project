@@ -1,9 +1,9 @@
 import re
-import pandas as pd
+import nltk
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 from nltk.tokenize import WhitespaceTokenizer
-
+import pandas as pd
 
 def create_patterns():
     months = [r'january', r'february', r'march', r'april', r'may', r'june',
@@ -36,7 +36,6 @@ _NON_WORD_NON_SPACE = re.compile(r"[^\w\s]")
 # Build once
 _STOP_WORDS = set(stopwords.words("english")) - {"no", "nor", "not"}
 _STEMMER = SnowballStemmer("english")
-_TOKENIZER = WhitespaceTokenizer()
 
 def clean_text(articles, tokenize_dates=True):
     '''
@@ -52,13 +51,13 @@ def clean_text(articles, tokenize_dates=True):
     '''
     cleaned = articles.fillna("").astype(str).str.lower()
     cleaned = cleaned.str.replace(pat=_PATTERNS['whitespace'], repl=r' ', regex=True)
-    cleaned = cleaned.str.replace(pat=_PATTERNS['email'], repl=r' <EMAIL> ', regex=True)
-    cleaned = cleaned.str.replace(pat=_PATTERNS['url'], repl=r' <URL> ', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['email'], repl=r'<EMAIL>', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['url'], repl=r'<URL>', regex=True)
     if tokenize_dates:
-        cleaned = cleaned.str.replace(pat=_PATTERNS['clean_bef_date'], repl=r' ', regex=True)
-        cleaned = cleaned.str.replace(pat=_PATTERNS['date'], repl=r' <DATE> ', regex=True)
-    cleaned = cleaned.str.replace(pat=_PATTERNS['non_word_non_space'], repl=r' ', regex=True)
-    cleaned = cleaned.str.replace(pat=_PATTERNS['num'], repl=r' <NUM> ', regex=True)
+        cleaned = cleaned.str.replace(pat=_PATTERNS['clean_bef_date'], repl=r'', regex=True)
+        cleaned = cleaned.str.replace(pat=_PATTERNS['date'], repl=r'<DATE>', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['non_word_non_space'], repl=r'', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['num'], repl=r'<NUM> ', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['whitespace'], repl=r' ', regex=True)
 
     return cleaned
@@ -79,7 +78,7 @@ def tokenize_series(texts):
     Returns: Series[list[str]] where each row is tokenized separately.
     """
     s = texts.fillna("").astype(str)
-    return s.apply(_TOKENIZER.tokenize)
+    return s.apply(nltk.word_tokenize)
 
 
 def rm_stopwords(tokens_series):
@@ -124,3 +123,9 @@ def encode_vocabulary(token_series):
     token_codes = token_series.apply(lambda ls: pd.Categorical(ls, dtype=cat_dtype).codes)
     return token_codes
 
+def preprocess_for_vectorizer(articles, tokenize_dates=True):
+    """
+    Clean text for TF-IDF / vectorizer-based models.
+    Returns a pandas Series of cleaned strings.
+    """
+    return clean_text(articles, tokenize_dates=tokenize_dates)

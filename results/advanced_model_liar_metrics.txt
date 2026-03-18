@@ -1,0 +1,22 @@
+Advanced model LIAR evaluation
+
+Model path: data/models/advanced_model.joblib
+LIAR test path: data/liar/test.tsv
+
+LIAR label mapping:
+  fake: pants-fire, false, barely-true
+  reliable: half-true, mostly-true, true
+
+F1: 0.6063
+Precision: 0.4375
+Recall: 0.9873
+Accuracy: 0.4404
+
+              precision    recall  f1-score   support
+
+           0       0.63      0.02      0.03       714
+           1       0.44      0.99      0.61       553
+
+    accuracy                           0.44      1267
+   macro avg       0.53      0.50      0.32      1267
+weighted avg       0.55      0.44      0.28      1267
