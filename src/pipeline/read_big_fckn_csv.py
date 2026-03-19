@@ -1,25 +1,28 @@
 import pandas as pd
 from pandas.errors import ParserError
-from preprocessing import preprocess_for_vectorizer
+from preprocessing import preprocess
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
 StartPath = Path.cwd().parents[1]
-_OUTPUT_PATH = StartPath / "data" / "full_preprocessed_dataset.csv"
+_OUTPUT_PATH = StartPath / "data" / "preprocessed_dataset.csv"
+_BIG_OUTPUT_PATH = StartPath / "data" / "full_preprocessed_dataset.csv"
 _TEST_FILEPATH = StartPath / "data" / "ParserError_chunk.csv"
-_FILEPATH = StartPath / "data" / "news_cleaned_2018_02_13.csv"
+_FILEPATH = StartPath / "data" / "995,000_rows.csv"
+_BIG_FILEPATH = StartPath / "data" / "news_cleaned_2018_02_13.csv"
 
-_CHUNKSIZE = 10
+_CHUNKSIZE = 20000
 _N_WORKERS = max(cpu_count() - 1, 1)
 
 def process_chunk(chunk):
-    chunk['content'] = preprocess_for_vectorizer(chunk["content"])
+    chunk['content_clean'] = preprocess(chunk["content"])
     return chunk
 
 def main():
-    cols = pd.read_csv(_FILEPATH, nrows=0).columns
+    cols = pd.read_csv(_FILEPATH, nrows=0).columns.tolist()
+    output_cols = cols + ['content_clean']
 
-    pd.DataFrame(columns=cols).to_csv(_OUTPUT_PATH, index=False)
+    pd.DataFrame(columns=output_cols).to_csv(_OUTPUT_PATH, index=False)
     print("Added columns to csv file")
 
     reader = pd.read_csv(

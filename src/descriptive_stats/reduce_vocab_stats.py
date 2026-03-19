@@ -21,4 +21,4 @@ df['types'] = df['types'].apply(lambda row: {key: int(val) for key, val in [labe
 df['count'] = df['types'].apply(lambda r: sum([r.get(l, 0) for l in ALL_LABELS]))
 # df = df.mask(df['count'] < 1).dropna()
 df = df.sort_values(by=['count'], ascending=False)
-df.head(50000).to_csv(_OUTPUT_PATH,mode="w",header=True, index=False)
+df.head(10000).to_csv(_OUTPUT_PATH,mode="w",header=True, index=False)

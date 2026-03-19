@@ -107,11 +107,11 @@ def token_char_size(tokens_series):
 def process_tokens(tokens_series):
     return tokens_series.apply(lambda tokens: [_STEMMER.stem(t) for t in tokens if t not in _STOP_WORDS])
 
-def preprocess(articles, tokenize_dates=True):
+def preprocess(articles):
     '''
     Combined function of all functions in preprocessing module
     '''
-    cleaned = clean_text(articles, tokenize_dates=tokenize_dates)
+    cleaned = clean_text(articles)
     tokens_series = tokenize_series(cleaned)
 
     return process_tokens(tokens_series)
