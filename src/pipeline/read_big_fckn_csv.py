@@ -1,14 +1,16 @@
 import pandas as pd
+from pandas.errors import ParserError
 from preprocessing import preprocess_for_vectorizer
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 
 StartPath = Path.cwd().parents[1]
 _OUTPUT_PATH = StartPath / "data" / "full_preprocessed_dataset.csv"
+_TEST_FILEPATH = StartPath / "data" / "ParserError_chunk.csv"
 _FILEPATH = StartPath / "data" / "news_cleaned_2018_02_13.csv"
 
-_CHUNKSIZE = 50000
-_N_WORKERS = max(cpu_count() - 4, 1)
+_CHUNKSIZE = 10
+_N_WORKERS = max(cpu_count() - 1, 1)
 
 def process_chunk(chunk):
     chunk['content'] = preprocess_for_vectorizer(chunk["content"])

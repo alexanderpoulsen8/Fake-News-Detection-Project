@@ -51,12 +51,12 @@ def clean_text(articles):
     '''
     cleaned = articles.fillna("").astype(str).str.lower()
     cleaned = cleaned.str.replace(pat=_PATTERNS['whitespace'], repl=r' ', regex=True)
-    cleaned = cleaned.str.replace(pat=_PATTERNS['email'], repl=r'<EMAIL>', regex=True)
-    cleaned = cleaned.str.replace(pat=_PATTERNS['url'], repl=r'<URL>', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['email'], repl=r' <EMAIL> ', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['url'], repl=r' <URL> ', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['clean_bef_date'], repl=r'', regex=True)
-    cleaned = cleaned.str.replace(pat=_PATTERNS['date'], repl=r'<DATE>', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['date'], repl=r' <DATE> ', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['non_word_non_space'], repl=r'', regex=True)
-    cleaned = cleaned.str.replace(pat=_PATTERNS['num'], repl=r'<NUM> ', regex=True)
+    cleaned = cleaned.str.replace(pat=_PATTERNS['num'], repl=r' <NUM> ', regex=True)
     cleaned = cleaned.str.replace(pat=_PATTERNS['whitespace'], repl=r' ', regex=True)
 
     return cleaned
