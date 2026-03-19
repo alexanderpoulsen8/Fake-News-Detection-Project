@@ -20,4 +20,3 @@ with pd.read_csv(
         print(f'Number of state articles in chunk: {n_state_articles}')
 
 
-print('done')
