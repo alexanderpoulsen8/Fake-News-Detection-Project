@@ -7,12 +7,12 @@ from sklearn.svm import LinearSVC
 import joblib
 
 
-TRAIN_PATH = Path("data/train.csv")
-VAL_PATH = Path("data/val.csv")
+TRAIN_PATH = Path("/Volumes/Lenovo PS6/Big Splits/train.csv")
+VAL_PATH = Path("/Volumes/Lenovo PS6/Big Splits/val.csv")
 MODEL_PATH = Path("data/models/advanced_model.joblib")
 RESULTS_PATH = Path("data/results/advanced_model_metrics.txt")
 
-SAMPLE_SIZE = 1000000
+SAMPLE_SIZE = 6821441
 MAX_FEATURES = 30000
 MIN_DF = 5
 NGRAM_RANGE = (1, 2)
@@ -20,11 +20,11 @@ C_VALUE = 0.5
 CHUNK_SIZE = 50000
 
 FAKE_LABELS = {
-    "fake", "conspiracy", "hate", "junksci", "unreliable", "bias", "satire", "political"
+    "fake", "conspiracy", "hate", "junksci", "unreliable", "bias", "satire", "political", "clickbait"
 }
 
 REAL_LABELS = {
-    "reliable", "clickbait"
+    "reliable"
 }
 
 
