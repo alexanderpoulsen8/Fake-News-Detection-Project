@@ -28,13 +28,13 @@ def main():
     # ============================================================
     # CONFIGURATION - Edit these values
     # ============================================================
-    DATA_DIR = r"D:\GDS\Fake-News-Detection-Project\data"
-    RESULTS_DIR = r"D:\GDS\Fake-News-Detection-Project\results"
+    DATA_DIR = r"C:\Users\jespe\GDS eksamen\Fake-News-Detection-Project\data"
+    RESULTS_DIR = r"C:\Users\jespe\GDS eksamen\Fake-News-Detection-Project\results"
     MODEL_NAME = "advanced_model"
     
     # Optional: Set to path of raw CSV if you need to preprocess
     # Set to None to skip preprocessing step
-    RAW_CSV_PATH = r"D:\BigAssCsv\news.csv\news_cleaned_2018_02_13.csv"  # e.g., r"D:\GDS\Fake-News-Detection-Project\data\raw_dataset.csv"
+    RAW_CSV_PATH = None  # e.g., r"D:\GDS\Fake-News-Detection-Project\data\raw_dataset.csv"
     
     # Model hyperparameters
     SAMPLE_SIZE = None  # Set to integer to use subset for faster training, None = use all data
