@@ -1,5 +1,4 @@
 import pandas as pd
-from pandas.errors import ParserError
 from preprocessing import preprocess
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
