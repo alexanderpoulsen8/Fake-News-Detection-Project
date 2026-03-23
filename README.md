@@ -3,9 +3,7 @@ https://absalon.ku.dk/courses/89126/assignments/258829
 ```
 ├── .DS_Store
 ├── .git
-│   ├── FETCH_HEAD
 │   ├── HEAD
-│   ├── branches
 │   ├── config
 │   ├── description
 │   ├── hooks
@@ -34,9 +32,9 @@ https://absalon.ku.dk/courses/89126/assignments/258829
 │   ├── objects
 │   │   ├── info
 │   │   └── pack
-│   │       ├── pack-410164faddae52efce6b03d8379ca3136b8cd18e.idx
-│   │       ├── pack-410164faddae52efce6b03d8379ca3136b8cd18e.pack
-│   │       └── pack-410164faddae52efce6b03d8379ca3136b8cd18e.rev
+│   │       ├── pack-f86b58c258fd9e0847bf504548f079a9e3507930.idx
+│   │       ├── pack-f86b58c258fd9e0847bf504548f079a9e3507930.pack
+│   │       └── pack-f86b58c258fd9e0847bf504548f079a9e3507930.rev
 │   ├── packed-refs
 │   └── refs
 │       ├── heads
@@ -47,16 +45,59 @@ https://absalon.ku.dk/courses/89126/assignments/258829
 ├── .gitignore
 ├── .vscode
 │   └── settings.json
-├── CookiesDelete.py
+├── Grouping.txt
 ├── README.md
-├── Test.py
-├── intro.md
+├── TMP scripts
+│   ├── CheckRows.py
+│   ├── Dynamic Paths.py
+│   └── PklToCsv.py
+├── docs
+│   └── temp.txt
+├── inspo
+│   ├── LongAss_logistic_model.pkl
+│   ├── advanced_evaluator.py
+│   ├── advanced_trainer.py
+│   └── assignment1.ipynb
 ├── istilldontcareaboutcookies-1.1.8.xpi
-├── news_sample.csv
 ├── requirements.txt
+├── requirements_new.txt
+├── scripts
+│   ├── CookiesDelete.py
+│   ├── DataSplit.py
+│   ├── ReadLabels.py
+│   ├── build_vocab_from_stats.py
+│   ├── setup_nltk.py
+│   └── verify_vocab.py
+├── simple_model_explanation.tex
 └── src
+    ├── Advanced_Main.py
+    ├── README_ADVANCED_PIPELINE.md
+    ├── README_PIPELINE.md
+    ├── Simple_Main.py
+    ├── Simple_model.py
+    ├── Simple_model_parallel.py
+    ├── advanced_model
+    │   ├── __init__.py
+    │   ├── evaluate_advanced_model.py
+    │   ├── evaluate_advanced_model_liar.py
+    │   ├── model_utils.py
+    │   ├── train_advanced_model.py
+    │   └── train_advanced_model_chunked.py
+    ├── descriptive_stats
+    │   ├── Dynamic Paths.py
+    │   ├── build_vocab.py
+    │   ├── reduce_vocab_stats.py
+    │   └── vocab_stats.py
     ├── pipeline
+    │   ├── data_splitter.py
+    │   ├── model_trainer.py
+    │   ├── news_sample.csv
+    │   ├── preprocess_with_duckdb.py
     │   ├── preprocessing.py
-    │   └── preprocessing_test.py
+    │   ├── preprocessing_test.py
+    │   ├── preprocessor.py
+    │   ├── read_big_fckn_csv.py
+    │   └── vocab_builder.py
+    ├── setup_nltk.py
     └── subset_test.py
 ```
