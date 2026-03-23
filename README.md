@@ -1,6 +1,6 @@
 # Fake-News-Detection-Project
 https://absalon.ku.dk/courses/89126/assignments/258829
-
+```
 ├── .DS_Store
 ├── .git
 │   ├── FETCH_HEAD
@@ -59,3 +59,4 @@ https://absalon.ku.dk/courses/89126/assignments/258829
     │   ├── preprocessing.py
     │   └── preprocessing_test.py
     └── subset_test.py
+```
