@@ -9,11 +9,11 @@ _BIG_OUTPUT_PATH = StartPath / "data" / 'big_dataset' / "full_preprocessed_datas
 _FILEPATH = StartPath / "data" / 'small_dataset' / "995,000_rows.csv"
 _BIG_FILEPATH = StartPath / "data" / 'big_dataset' / "news_cleaned_2018_02_13.csv"
 
-_CHUNKSIZE = 5000
-_N_WORKERS = max(cpu_count() - 1, 1)
+_CHUNKSIZE = 10000
+_N_WORKERS = max(cpu_count() - 3, 1)
 
 def process_chunk(chunk):
-    chunk['content_clean'] = preprocess(chunk["content"])
+    chunk['content'] = preprocess(chunk["content"])
     return chunk
 
 def preprocess_dataset(
@@ -22,7 +22,7 @@ def preprocess_dataset(
     chunksize=_CHUNKSIZE,
     n_workers=_N_WORKERS
 ):
-    cols = pd.read_csv(_FILEPATH, nrows=0).columns
+    cols = pd.read_csv(filepath, nrows=0).columns
 
 
     pd.DataFrame(columns=cols).to_csv(output_path, index=False)
@@ -39,7 +39,7 @@ def preprocess_dataset(
     with Pool(n_workers) as pool:
         print(f"Starting process using {n_workers} CPU processors")
         for i, processed_chunk in enumerate(pool.imap(process_chunk, reader, chunksize=1), 1):
-            print(f"chunk {i} done")
+            print(f"chunk {i:,} done, approx {i*chunksize:,} articles")
             processed_chunk.to_csv(
                 output_path,
                 mode="a",

@@ -1,14 +1,12 @@
 import pandas as pd
 import numpy as np
 from pathlib import Path
-from multiprocessing import Pool, cpu_count
 
 start_path = Path.cwd().parents[2]
 _DATA_DIR = start_path / 'data' / 'big_dataset'
 _TRAIN_PATH = _DATA_DIR / 'big_preprocessed_split' / "train.csv"
 _DOC_FREQ_PATH = _DATA_DIR / 'tf_idf' / 'big_doc_freq_vector.csv'
 
-_N_WORKERS = 1
 _CHUNKSIZE = 1000
 _NROWS = 6821441
 
@@ -44,7 +42,7 @@ def build_doc_freq(train_path=_TRAIN_PATH):
             for term in terms:
                 doc_freq[term] = doc_freq.get(term, 0) + 1
 
-        # prune periodically
+        # prune if number of features is too much for memory to handle
         if len(doc_freq) > 100_000_000:
             print(f'Pruning after {i} chunks')
             doc_freq = {k: v for k, v in doc_freq.items() if v >= 2}

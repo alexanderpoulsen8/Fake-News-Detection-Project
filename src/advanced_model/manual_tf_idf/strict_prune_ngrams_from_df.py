@@ -9,8 +9,8 @@ _OUTPUT_VOCAB_PATH = data_dir / 'tf_idf' / 'big_strict_pruned_vocabulary.csv'
 _OUTPUT_IDF_PATH = data_dir / 'tf_idf' / 'big_strict_pruned_doc_freq_vector.csv'
 
 _N = 6821441
-_MIN_DF = 4500
-_MAX_DF = 0.002
+_MIN_DF = 1000
+_MAX_DF = 0.1
 
 def prune(
     filepath=_FILEPATH,
