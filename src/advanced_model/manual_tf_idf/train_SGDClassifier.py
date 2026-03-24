@@ -15,7 +15,7 @@ _TRAIN_PATH = data_dir / 'big_preprocessed_split' / 'train.csv'
 _OUTPUT_MODEL_PATH = data_dir / 'models' / 'SGDClasssifier.joblib'
 
 _N_WORKERS = max(cpu_count() - 1, 1)
-_CHUNKSIZE = 1000
+_CHUNKSIZE = 10000
 
 def train_SGDClassifier(
     train_path=_TRAIN_PATH,
