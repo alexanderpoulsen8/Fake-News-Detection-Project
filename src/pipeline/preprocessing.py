@@ -106,14 +106,17 @@ def token_char_size(tokens_series):
 def process_tokens(tokens_series):
     return tokens_series.apply(lambda tokens: [_STEMMER.stem(t) for t in tokens if t not in _STOP_WORDS])
 
+def tokens_to_string(tokens_series):
+    return tokens_series.apply(lambda toks: ' '.join(toks))
+
 def preprocess(articles):
     '''
     Combined function of all functions in preprocessing module
     '''
     cleaned = clean_text(articles)
     tokens_series = tokenize_series(cleaned)
-
-    return process_tokens(tokens_series)
+    processed = process_tokens(tokens_series)
+    return tokens_to_string(processed)
 
 def encode_vocabulary(token_series):
     vocab = pd.unique(token_series.explode())
