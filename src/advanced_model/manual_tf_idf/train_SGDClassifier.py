@@ -48,6 +48,8 @@ def train_SGDClassifier(
             pool.imap(Vec.vectorize_chunk, reader, chunksize=1),
             1
         ):
+            if X.shape[0] == 0:
+                continue
             total_rows += len(y)
             clf.partial_fit(X, y, classes=classes)
             print(f'Vectorized and fitted {i:,} chunks = {total_rows:,} rows')

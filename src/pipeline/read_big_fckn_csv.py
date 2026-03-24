@@ -6,7 +6,6 @@ from pathlib import Path
 StartPath = Path.cwd().parents[1]
 _OUTPUT_PATH = StartPath / "data" / "preprocessed_dataset.csv"
 _BIG_OUTPUT_PATH = StartPath / "data" / "full_preprocessed_dataset.csv"
-_TEST_FILEPATH = StartPath / "data" / "ParserError_chunk.csv"
 _FILEPATH = StartPath / "data" / "995,000_rows.csv"
 _BIG_FILEPATH = StartPath / "data" / "news_cleaned_2018_02_13.csv"
 

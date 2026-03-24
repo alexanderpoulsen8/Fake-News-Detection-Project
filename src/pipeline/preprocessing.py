@@ -76,8 +76,7 @@ def tokenize_series(texts):
     texts: pandas Series (strings)
     Returns: Series[list[str]] where each row is tokenized separately.
     """
-    s = texts.fillna("").astype(str)
-    return s.apply(nltk.word_tokenize)
+    return texts.str.split()
 
 
 def rm_stopwords(tokens_series):
