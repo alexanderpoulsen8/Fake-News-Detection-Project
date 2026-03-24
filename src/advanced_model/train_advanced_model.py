@@ -24,7 +24,7 @@ FAKE_LABELS = {
 }
 
 REAL_LABELS = {
-    "reliable", "state"
+    "reliable"
 }
 
 
