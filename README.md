@@ -21,7 +21,7 @@ To run the model, follow these steps:
 
 4. View the results:
    - The script will output the results to the console and save them in the `results/` directory.
-   
+
 ```
 ├── Grouping.txt
 ├── README.md
@@ -30,20 +30,10 @@ To run the model, follow these steps:
 │   └── PklToCsv.py
 ├── data
 │   ├── liar
-│   │   ├── README
-│   │   ├── test.tsv
-│   │   ├── train.tsv
-│   │   └── valid.tsv
 │   ├── logistic_model.pkl
 │   ├── models
-│   │   ├── advanced_model.joblib
-│   │   └── advanced_model_chunked.joblib
 │   ├── processed
-│   │   └── preprocessed_dataset.csv
 │   ├── results
-│   │   ├── advanced_model_chunked_metrics.txt
-│   │   ├── advanced_model_full_evaluation.txt
-│   │   └── advanced_model_metrics.txt
 │   ├── test.csv
 │   ├── tmp.csv
 │   ├── top_10000_vocab.pkl
@@ -69,58 +59,14 @@ To run the model, follow these steps:
 │   ├── Simple_model.py
 │   ├── Simple_model_parallel.py
 │   ├── advanced_model
-│   │   ├── __init__.py
-│   │   ├── evaluate_advanced_model.py
-│   │   ├── evaluate_advanced_model_liar.py
-│   │   ├── model_utils.py
-│   │   ├── train_advanced_model.py
-│   │   └── train_advanced_model_chunked.py
 │   ├── descriptive_stats
-│   │   ├── build_vocab.py
-│   │   ├── reduce_vocab_stats.py
-│   │   └── vocab_stats.py
 │   ├── pipeline
-│   │   ├── __pycache__
-│   │   │   └── preprocessing.cpython-313.pyc
-│   │   ├── data_splitter.py
-│   │   ├── model_trainer.py
-│   │   ├── news_sample.csv
-│   │   ├── preprocess_with_duckdb.py
-│   │   ├── preprocessing.py
-│   │   ├── preprocessing_test.py
-│   │   ├── preprocessor.py
-│   │   ├── read_big_fckn_csv.py
-│   │   └── vocab_builder.py
 │   ├── setup_nltk.py
 │   └── subset_test.py
 └── venv
     ├── bin
-    │   ├── Activate.ps1
-    │   ├── activate
-    │   ├── activate.csh
-    │   ├── activate.fish
-    │   ├── f2py
-    │   ├── fonttools
-    │   ├── nltk
-    │   ├── numpy-config
-    │   ├── pip
-    │   ├── pip3
-    │   ├── pip3.13
-    │   ├── pyftmerge
-    │   ├── pyftsubset
-    │   ├── python -> python3
-    │   ├── python3 -> /opt/miniconda3/bin/python3
-    │   ├── python3.13 -> python3
-    │   ├── tqdm
-    │   ├── ttx
-    │   └── wsdump
     ├── include
-    │   └── python3.13
     ├── lib
-    │   └── python3.13
-    │       └── site-packages
     ├── pyvenv.cfg
     └── share
-        └── man
-            └── man1
 ```
