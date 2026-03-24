@@ -8,7 +8,7 @@ _DATA_DIR = start_path / 'data' / 'big_dataset'
 _TRAIN_PATH = _DATA_DIR / 'big_preprocessed_split' / "train.csv"
 _DOC_FREQ_PATH = _DATA_DIR / 'tf_idf' / 'big_doc_freq_vector.csv'
 
-_N_WORKERS = 1 # max(cpu_count() - 4, 1)
+_N_WORKERS = 1
 _CHUNKSIZE = 1000
 _NROWS = 6821441
 
@@ -23,7 +23,6 @@ def vocabulary_of_content_per_article(df):
 
 
 def build_doc_freq(train_path=_TRAIN_PATH):
-    doc_freq = {}
     reader = pd.read_csv(
         train_path,
         chunksize=_CHUNKSIZE,
@@ -33,25 +32,25 @@ def build_doc_freq(train_path=_TRAIN_PATH):
     )
 
     print('Processing corpus...\n')
-    with Pool(_N_WORKERS) as pool:
-        for i, chunk in enumerate(
-            pool.imap(
-                vocabulary_of_content_per_article,
-                reader,
-                chunksize=1
-            ),
-            1
-        ):
-            for article_vocab in chunk:
-                for term in article_vocab:
-                    doc_freq[term] = doc_freq.get(term, 0) + 1
-            print(f'updated doc frequency vector of first {i} chunks and '
-                  f'first {i*_CHUNKSIZE:,} articles')
+    doc_freq = {}
 
-    print(f'Adding doc frequency to csv file {_DOC_FREQ_PATH}')
-    pd.DataFrame(
-        list(doc_freq.items()), columns=['word','doc_freq']
-    ).to_csv(_DOC_FREQ_PATH, index=False)
+    for i, chunk in enumerate(reader,1):
+        for doc in chunk['content'].fillna(''):
+            tokens = doc.split(' ')
+
+            terms = set(tokens)
+            terms |= {' '.join(tokens[i:i+2]) for i in range(len(tokens)-1)}
+
+            for term in terms:
+                doc_freq[term] = doc_freq.get(term, 0) + 1
+
+        # prune periodically
+        if len(doc_freq) > 100_000_000:
+            print(f'Pruning after {i} chunks')
+            doc_freq = {k: v for k, v in doc_freq.items() if v >= 2}
+
+    print(f'Adding df dictionary to csv file \n{_DOC_FREQ_PATH}')
+    pd.DataFrame(list(doc_freq.items()), columns=['term','doc_freq']).to_csv(_DOC_FREQ_PATH, index=False)
     print('Finished')
 
 if __name__ == '__main__':
