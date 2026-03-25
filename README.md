@@ -10,6 +10,7 @@ To run the model, follow these steps:
    pip install -r requirements.txt
    ```
    (or use our virtual environment).
+
 2. Prepare your dataset:
    - Make sure to have the 995k subset (and the full dataset if you wish to run it) in the same directory on your machine. On line xxx in ```main.py```, you can specify the path to the directory which contains the data. Please note that the file names must match the expected format.
 
