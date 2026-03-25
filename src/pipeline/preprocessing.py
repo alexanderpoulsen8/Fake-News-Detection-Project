@@ -2,7 +2,6 @@ import re
 import nltk
 from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
-from nltk.tokenize import WhitespaceTokenizer
 import pandas as pd
 
 def create_patterns():
@@ -84,7 +83,9 @@ def rm_stopwords(tokens_series):
     tokens_series: Series[list[str]]
     Returns: Series[list[str]] with stopwords removed (keeps no/nor/not).
     """
-    return tokens_series.apply(lambda toks: [t for t in toks if t not in _STOP_WORDS])
+    return tokens_series.apply(
+        lambda toks: [t for t in toks if t not in _STOP_WORDS]
+    )
 
 
 def stem_tokens(tokens_series):
@@ -104,18 +105,22 @@ def token_char_size(tokens_series):
 
 
 def process_tokens(tokens_series):
-    return tokens_series.apply(lambda tokens: [_STEMMER.stem(t) for t in tokens if t not in _STOP_WORDS])
+    return tokens_series.apply(
+        lambda toks: [
+            _STEMMER.stem(t) for t in toks if t not in _STOP_WORDS
+        ]
+    )
 
-def tokens_to_string(tokens_series):
+def tokens_to_string(tokens_series): # For easier data analysis after preprocessing
     return tokens_series.apply(lambda toks: ' '.join(toks))
 
 def preprocess(articles):
     '''
     Combined function of all functions in preprocessing module
     '''
-    cleaned = clean_text(articles)
-    tokens_series = tokenize_series(cleaned)
-    processed = process_tokens(tokens_series)
+    processed = clean_text(articles)
+    processed = tokenize_series(processed)
+    processed = process_tokens(processed)
     return tokens_to_string(processed)
 
 def encode_vocabulary(token_series):
