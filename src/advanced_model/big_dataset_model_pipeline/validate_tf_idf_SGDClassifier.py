@@ -4,8 +4,8 @@ from pathlib import Path
 import joblib
 
 start_path = Path.cwd().parents[2]
-data_dir = start_path / 'data' / 'big_dataset'
-_VAL_PATH = data_dir / 'big_preprocessed_split' / 'val.csv'
+data_dir = start_path / 'data' / 'LIAR'
+_VAL_PATH = data_dir / 'valid.tsv'
 _MODEL_PATH = data_dir / 'models' / 'SGDClassifier.joblib'
 _OUTPUT_RESULTS_PATH = data_dir / 'results' / 'SGDClassifier_metrics.txt'
 
@@ -14,7 +14,7 @@ def main(
     model_path=_MODEL_PATH,
     output_path=_OUTPUT_RESULTS_PATH
 ):
-    X, y = tfidf.vectorize_articles(val_path)
+    X, y = tfidf.vectorize_articles(val_path, LIAR=True)
     clf = joblib.load(model_path)
 
     print('\nPredicting y values...')

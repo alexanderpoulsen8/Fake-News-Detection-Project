@@ -150,6 +150,7 @@ def vectorize_articles(
     n_workers: None | int = None,
     chunksize=_CHUNKSIZE,
     multiprocessing=True,
+    LIAR=False
 ):
     print('\nidf and vocab index map are stored as global variables.')
     print('\nProcessing articles in training set...')
@@ -157,7 +158,8 @@ def vectorize_articles(
         articles_filepath,
         usecols=['content', 'type'],
         chunksize=chunksize,
-        low_memory=False
+        low_memory=False,
+        sep='\t' if LIAR else ','
     )
     total_articles = 0
     chunks = []
