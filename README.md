@@ -43,17 +43,10 @@ To run the model, follow these steps:
 │   ├── vocab.pkl
 │   └── vocabulary.csv
 ├── docs
-│   └── temp.txt
-├── inspo
-│   ├── LongAss_logistic_model.pkl
-│   └── assignment1.ipynb
+│   ├── preprocessing.py
+|   └── p1_data_processing.ipynb
 ├── requirements.txt
 ├── requirements_new.txt
-├── scripts
-│   ├── DataSplit.py
-│   ├── build_vocab_from_stats.py
-│   ├── setup_nltk.py
-│   └── verify_vocab.py
 ├── src
 │   ├── Advanced_Main.py
 │   ├── Simple_Main.py
