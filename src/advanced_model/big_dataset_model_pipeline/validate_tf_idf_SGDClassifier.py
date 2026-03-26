@@ -4,8 +4,8 @@ from pathlib import Path
 import joblib
 
 start_path = Path.cwd().parents[2]
-data_dir = start_path / 'data' / 'big_dataset'
-_VAL_PATH = data_dir / 'big_preprocessed_split' / 'val.csv'
+data_dir = start_path / 'data' / 'medium_dataset'
+_VAL_PATH = data_dir / 'preprocessed_dataset.csv'
 _MODEL_PATH = data_dir / 'models' / 'SGDClassifier.joblib'
 _OUTPUT_RESULTS_PATH = data_dir / 'results' / 'SGDClassifier_metrics.txt'
 

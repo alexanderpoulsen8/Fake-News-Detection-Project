@@ -1,5 +1,5 @@
 import pandas as pd
-from .preprocessing import preprocess_for_vectorizer
+from preprocessing import preprocess_for_vectorizer
 from multiprocessing import Pool, cpu_count
 from pathlib import Path
 import os
@@ -13,7 +13,7 @@ def process_chunk(chunk):
     chunk["content"] = preprocess_for_vectorizer(chunk["content"])
     return chunk
 
-def preprocess_large_csv(input_path, output_path, chunksize=100000, n_workers=None):
+def preprocess_large_csv(input_path, output_path, chunksize=_CHUNKSIZE, n_workers=None):
     """
     Preprocess a large CSV file in parallel using multiprocessing.
 
@@ -44,7 +44,7 @@ def preprocess_large_csv(input_path, output_path, chunksize=100000, n_workers=No
         quotechar='"',
         usecols=cols,
         on_bad_lines='skip',
-        engine='python'
+        low_memory=False
     )
 
     with Pool(n_workers) as pool:
