@@ -156,7 +156,7 @@ def train_model(data_dir, results_dir, top_k, model_name="logistic_model"):
     with open(vocab_save_file, 'wb') as f:
         pickle.dump(vocab, f)
     
-    print("✓ Model saved successfully!")
+    print(" Model saved successfully!")
     
     # Save detailed results to results directory
     results_file = os.path.join(results_dir, f"{model_name}_results.txt")
@@ -179,7 +179,7 @@ def train_model(data_dir, results_dir, top_k, model_name="logistic_model"):
         f.write(f"Test Classification Report:\n")
         f.write(test_report)
     
-    print(f"✓ Results saved to {results_file}")
+    print(f"Results saved to {results_file}")
     
     # Save results as CSV for easy analysis
     results_csv = os.path.join(results_dir, f"{model_name}_results.csv")
@@ -188,7 +188,7 @@ def train_model(data_dir, results_dir, top_k, model_name="logistic_model"):
         'value': [val_acc, val_f1, test_acc, test_f1]
     })
     results_df.to_csv(results_csv, index=False)
-    print(f"✓ Results CSV saved to {results_csv}")
+    print(f"Results CSV saved to {results_csv}")
     
     return {
         'val_f1': val_f1,

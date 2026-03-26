@@ -82,5 +82,5 @@ def split_data(data_dir, preprocessed_file="preprocessed_dataset.csv", salt="v1"
     """)
     
     con.close()
-    print("✓ Data split complete!")
+    print("Data split complete!")
     return True

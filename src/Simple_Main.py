@@ -41,13 +41,13 @@ def main():
 
     # Verify data directory exists
     if not os.path.exists(DATA_DIR):
-        print(f"❌ Error: Data directory not found: {DATA_DIR}")
+        print(f" Error: Data directory not found: {DATA_DIR}")
         sys.exit(1)
 
     # Check if preprocessed data exists
     preprocessed_file = os.path.join(DATA_DIR, "preprocessed_dataset.csv")
     if not os.path.exists(preprocessed_file):
-        print(f"❌ Error: Preprocessed dataset not found: {preprocessed_file}")
+        print(f" Error: Preprocessed dataset not found: {preprocessed_file}")
         print("Please run preprocessing first!")
         sys.exit(1)
 
@@ -85,7 +85,7 @@ def main():
         print("="*60)
 
     except Exception as e:
-        print(f"\n❌ Error: {e}")
+        print(f"\nError: {e}")
         import traceback
         traceback.print_exc()
         sys.exit(1)

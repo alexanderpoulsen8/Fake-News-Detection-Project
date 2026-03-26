@@ -43,27 +43,36 @@ To run the model, follow these steps:
 │   ├── vocab.pkl
 │   └── vocabulary.csv
 ├── docs
-│   └── temp.txt
-├── inspo
-│   ├── LongAss_logistic_model.pkl
-│   └── assignment1.ipynb
+│   ├── p1_data_processing.ipynb
+│   ├── preprocessing.py
+|   └── print_top_100_words.py
 ├── requirements.txt
 ├── requirements_new.txt
-├── scripts
-│   ├── DataSplit.py
-│   ├── build_vocab_from_stats.py
-│   ├── setup_nltk.py
-│   └── verify_vocab.py
 ├── src
 │   ├── Advanced_Main.py
 │   ├── Simple_Main.py
-│   ├── Simple_model.py
-│   ├── Simple_model_parallel.py
-│   ├── advanced_model
-│   ├── descriptive_stats
-│   ├── pipeline
 │   ├── setup_nltk.py
-│   └── subset_test.py
+│   ├── pipeline
+│   │    ├── data_splitter.py
+│   │    ├── model_trainer.py
+│   │    ├── news_sample.csv
+│   │    ├── preprocess_with_duckdb.py
+│   │    ├── preprocessing.py
+│   │    └── vocab_builder.py
+│   └── advanced_model
+│        ├── __init__.py
+│        ├── evaluate_advanced_model.py
+│        ├── train_advanced_model.py
+│        ├── train_advanced_model_chunked.py
+│        └── big_dataset_model_pipeline
+│             ├── build_doc_freq_vector.py
+│             ├── df_to_idf.py
+│             ├── LIAR_validate_tf_idf_SGDClassifier.py
+│             ├── prune_ngrams_from_df.py
+│             ├── strict_prun_ngrams_from_df.py
+│             ├── tf_idf_vectorizer.py
+│             ├── train_SGDClassifier.py
+│             └── validate_tf_idf_SGDClassifier.py
 └── venv
     ├── bin
     ├── include
