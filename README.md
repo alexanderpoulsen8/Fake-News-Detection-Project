@@ -43,8 +43,9 @@ To run the model, follow these steps:
 │   ├── vocab.pkl
 │   └── vocabulary.csv
 ├── docs
+│   ├── p1_data_processing.ipynb
 │   ├── preprocessing.py
-|   └── p1_data_processing.ipynb
+|   └── print_top_100_words.py
 ├── requirements.txt
 ├── requirements_new.txt
 ├── src
