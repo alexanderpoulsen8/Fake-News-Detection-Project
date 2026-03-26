@@ -50,13 +50,14 @@ To run the model, follow these steps:
 ├── src
 │   ├── Advanced_Main.py
 │   ├── Simple_Main.py
-│   ├── Simple_model.py
-│   ├── Simple_model_parallel.py
-│   ├── advanced_model
-│   ├── descriptive_stats
-│   ├── pipeline
 │   ├── setup_nltk.py
-│   ├── subset_test.py
+│   ├── pipeline
+│   │    ├── data_splitter.py
+│   │    ├── model_trainer.py
+│   │    ├── news_sample.csv
+│   │    ├── preprocess_with_duckdb.py
+│   │    ├── preprocessing.py
+│   │    └── vocab_builder.py
 │   └── advanced_model
 │        ├── __init__.py
 │        ├── evaluate_advanced_model.py
