@@ -1,22 +1,22 @@
 Advanced model LIAR evaluation
 
-Model path: data/models/SGDClassifier.joblib
+Model path: data/models/advanced_model.joblib
 LIAR test path: data/liar/liar_dataset/liar_dataset_combined.tsv
 
 LIAR label mapping:
-  fake: pants-fire, false, barely-true
-  reliable: half-true, mostly-true, true
+  fake: pants-fire, false, barely-true, half-true, mostly-true
+  reliable: true
 
-F1: 0.8570
-Precision: 0.8428
-Recall: 0.8717
-Accuracy: 0.7558
+F1: 0.9049
+Precision: 0.8391
+Recall: 0.9818
+Accuracy: 0.8267
 
               precision    recall  f1-score   support
 
-           0       0.18      0.15      0.16      2053
-           1       0.84      0.87      0.86     10738
+           0       0.14      0.02      0.03      2053
+           1       0.84      0.98      0.90     10738
 
-    accuracy                           0.76     12791
-   macro avg       0.51      0.51      0.51     12791
-weighted avg       0.74      0.76      0.75     12791
+    accuracy                           0.83     12791
+   macro avg       0.49      0.50      0.47     12791
+weighted avg       0.73      0.83      0.76     12791

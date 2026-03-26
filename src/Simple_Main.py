@@ -25,7 +25,7 @@ def main():
     # ============================================================
     # CONFIGURATION - Edit these values
     # ============================================================
-    DATA_DIR = Path.cwd().parents[0] / 'data' / 'LIAR'
+    DATA_DIR = Path.cwd().parents[0] / 'data'
     RESULTS_DIR = DATA_DIR / "results"
     TOP_K_WORDS = 10000
     MODEL_NAME = "logistic_model"

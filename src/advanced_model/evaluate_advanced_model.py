@@ -14,7 +14,7 @@ from sklearn.metrics import (
 TRAIN_PATH = Path("data/train.csv")
 VAL_PATH = Path("data/val.csv")
 TEST_PATH = Path("data/test.csv")
-MODEL_PATH = Path("Volumes/models/SGDClassifier.joblib")
+MODEL_PATH = Path("data/models/SGDClassifier.joblib")
 RESULTS_PATH = Path("data/results/advanced_model_full_evaluation.txt")
 
 FAKE_LABELS = {
