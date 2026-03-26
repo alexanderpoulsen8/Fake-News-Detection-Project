@@ -14,8 +14,8 @@ from collections import Counter
 
 
 # Label groupings
-FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias'}
-TRUE_LABELS = {'reliable', 'political', 'state', 'clickbait'}
+FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias', 'political', 'state', 'clickbait'}
+TRUE_LABELS = {'reliable'}
 
 
 def load_data(data_dir, split):
