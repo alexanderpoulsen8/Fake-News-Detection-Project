@@ -1,3 +1,8 @@
+'''
+    This script was only used for ease of testing different feature spaces,
+    as storing the whole document frequency vector requires around
+    10-12GB and is therefore very slow to process.
+'''
 import pandas as pd
 import numpy as np
 from pathlib import Path
@@ -8,9 +13,9 @@ _FILEPATH = data_dir / 'tf_idf' / 'big_pruned_doc_freq_vector.csv'
 _OUTPUT_VOCAB_PATH = data_dir / 'tf_idf' / 'big_strict_pruned_vocabulary.csv'
 _OUTPUT_IDF_PATH = data_dir / 'tf_idf' / 'big_strict_pruned_doc_freq_vector.csv'
 
-_N = 6821441
-_MIN_DF = 1000
-_MAX_DF = 0.1
+_N = 6821441 # Number of articles that vocabulary is built on
+_MIN_DF = 1000 # Absolute minimal document frequency per term
+_MAX_DF = 0.1 # Relative maximal document frequency per term
 
 def prune(
     filepath=_FILEPATH,

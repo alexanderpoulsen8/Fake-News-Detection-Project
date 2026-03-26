@@ -3,7 +3,7 @@ from numpy import log
 from pathlib import Path
 from multiprocessing import Pool, cpu_count
 
-start_path = Path.cwd().parents[2]
+start_path = Path.cwd().parents[3]
 _DATA_DIR = start_path / 'data' / 'big_dataset'
 _TRAIN_PATH = _DATA_DIR / 'big_preprocessed_split' / "train.csv"
 _VOCAB_PATH = _DATA_DIR / 'tf_idf' / 'big_vocabulary.csv'
