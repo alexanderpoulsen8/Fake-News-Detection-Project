@@ -9,12 +9,12 @@ import pickle
 from pathlib import Path
 
 StartPath = Path.cwd()
-DATA_DIR = StartPath / "data"
+DATA_DIR = StartPath / "data/liar"
 
 TOP_K_WORDS = 10000
 
-FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias'}
-TRUE_LABELS = {'reliable', 'political', 'state', 'clickbait'}
+FAKE_LABELS = {'unreliable', 'hate', 'junksci', 'fake', 'satire', 'conspiracy', 'bias', 'political', 'state', 'clickbait'}
+TRUE_LABELS = {'reliable'}
 
 
 def load_data(split):

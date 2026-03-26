@@ -1,6 +1,19 @@
 from pathlib import Path
+from collections import Counter
+
+import numpy as np
 import pandas as pd
 import joblib
+from scipy.sparse import csr_matrix
+
+# Ensure project root is on sys.path so `from src...` imports work when running
+# this script directly (python src/advanced_model/evaluate_advanced_model_liar.py).
+import sys
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from src.advanced_model.big_dataset_model_pipeline import tf_idf_vectorizer as Vec
 
 from sklearn.metrics import (
     f1_score,
@@ -11,16 +24,10 @@ from sklearn.metrics import (
     recall_score,
 )
 
-LIAR_TEST_PATH = Path("data/liar/test.tsv")
-MODEL_PATH = Path("data/models/advanced_model.joblib")
+LIAR_TEST_PATH = Path("data/liar/liar_dataset/liar_dataset_combined.tsv")
+MODEL_PATH = Path("data/models/SGDClassifier.joblib")
 RESULTS_PATH = Path("results/advanced_model_liar_metrics.txt")
-CONFUSION_PATH = Path("results/$advanced_model_liar_confusion_matrix.csv")
-
-# LIAR columns:
-# 0: id
-# 1: label
-# 2: statement
-# ... rest are metadata
+CONFUSION_PATH = Path("results/advanced_model_liar_confusion_matrix.csv")
 
 LIAR_COLUMNS = [
     "id",
@@ -39,8 +46,8 @@ LIAR_COLUMNS = [
     "context",
 ]
 
-FAKE_LABELS = {"pants-fire", "false", "barely-true"}
-REAL_LABELS = {"half-true", "mostly-true", "true"}
+FAKE_LABELS = {"pants-fire", "false", "barely-true","half-true", "mostly-true"}
+REAL_LABELS = {"true"}
 
 
 def map_liar_label(label):
@@ -67,6 +74,21 @@ def prepare_liar_df(df):
     return df
 
 
+def vectorize_texts(texts):
+    rows, cols, data = [], [], []
+
+    for row_idx, text in enumerate(texts):
+        tokens = str(text).split(" ")
+        indices, values = Vec.vectorize_doc(tokens, ngram_range=(1, 2), sublinear=True)
+
+        rows.extend([row_idx] * len(indices))
+        cols.extend(indices)
+        data.extend(values)
+
+    X = csr_matrix((data, (rows, cols)), shape=(len(texts), len(Vec.vocab_idx)))
+    return X
+
+
 def main():
     print("Loading LIAR test data...")
     liar_df = pd.read_csv(
@@ -79,14 +101,17 @@ def main():
 
     liar_df = prepare_liar_df(liar_df)
 
-    X_test = liar_df["statement"].astype(str)
-    y_test = liar_df["binary_label"]
+    X_test_text = liar_df["statement"].astype(str).tolist()
+    y_test = liar_df["binary_label"].to_numpy()
 
-    print("Loading trained advanced model...")
+    print("Vectorizing LIAR statements with custom TF-IDF pipeline...")
+    X_test_vec = vectorize_texts(X_test_text)
+
+    print("Loading trained SGDClassifier...")
     model = joblib.load(MODEL_PATH)
 
     print("Predicting on LIAR test set...")
-    y_pred = model.predict(X_test)
+    y_pred = model.predict(X_test_vec)
 
     test_f1 = f1_score(y_test, y_pred)
     test_precision = precision_score(y_test, y_pred)
@@ -105,6 +130,7 @@ def main():
     print(cm)
 
     RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)
+
     with open(RESULTS_PATH, "w", encoding="utf-8") as f:
         f.write("Advanced model LIAR evaluation\n\n")
         f.write(f"Model path: {MODEL_PATH}\n")

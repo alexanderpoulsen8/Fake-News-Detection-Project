@@ -13,19 +13,19 @@ Usage:
 
 import os
 import sys
+from pathlib import Path
 
 # Import pipeline modules
 from pipeline.data_splitter import split_data
 from pipeline.vocab_builder import build_vocabulary
 from pipeline.model_trainer import train_model
 
-
 def main():
     # ============================================================
     # CONFIGURATION - Edit these values
     # ============================================================
-    DATA_DIR = r"D:\GDS\Fake-News-Detection-Project\data"
-    RESULTS_DIR = r"D:\GDS\Fake-News-Detection-Project\results"
+    DATA_DIR = Path("data/liar")
+    RESULTS_DIR = Path("data/results/")
     TOP_K_WORDS = 10000
     MODEL_NAME = "logistic_model"
     
@@ -87,8 +87,7 @@ def main():
         print(f"\n❌ Error: {e}")
         import traceback
         traceback.print_exc()
-        sys.exit(1)
-
+        sys.exit(1)  
 
 if __name__ == "__main__":
     main()
