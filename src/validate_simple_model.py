@@ -116,7 +116,7 @@ def main(LIAR=False):
     X_test = create_features(test_df, vocab)
     y_test = test_df['label'].values
 
-    print("\nTraining logistic regression...")
+    print("\Loading logistic regression model...")
     model = pickle.load(open(MODEL_PATH, 'rb'))
 
     print("\nValidation Results:")

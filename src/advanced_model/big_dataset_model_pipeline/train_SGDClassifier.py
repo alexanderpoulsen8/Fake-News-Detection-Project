@@ -10,14 +10,14 @@ import joblib
 start_path = Path.cwd().parents[2]
 data_dir = start_path / 'data' / 'big_dataset'
 _TRAIN_PATH = data_dir / 'big_preprocessed_split' / 'train.csv'
-_OUTPUT_MODEL_PATH = data_dir / 'models' / 'SGDClassifier.joblib'
+_OUTPUT_MODEL_PATH = data_dir / 'models' / 'squared_hinge_SGDClassifier.joblib'
 
 
-_BUFFER_SIZE = 800_000
+_BUFFER_SIZE = 700_000
 _CHUNKSIZE = 1_000
 _BATCH_SIZE = 512
 _EPOCHS = 5
-_N_WORKERS = max(cpu_count() - 2, 1)
+_N_WORKERS = max(cpu_count() - 1, 1)
 
 def get_class_weights(
     train_path=_TRAIN_PATH,
@@ -69,7 +69,7 @@ def train_SGDClassifier(
     print('Preparing SGDClassifier and reader...')
 
     clf = SGDClassifier(
-        loss='hinge',
+        loss='squared_hinge',
         penalty='l2',
         alpha=1e-7,
         learning_rate='constant',

@@ -6,21 +6,22 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.svm import LinearSVC
 import joblib
 
-
-TRAIN_PATH = Path("data/train.csv")
-VAL_PATH = Path("data/val.csv")
-MODEL_PATH = Path("data/models/advanced_model.joblib")
-RESULTS_PATH = Path("data/results/advanced_model_metrics.txt")
+data_dir = Path.cwd().parents[1] / 'data'
+TRAIN_PATH = data_dir  / 'medium_dataset' / "train.csv"
+VAL_PATH = data_dir  / 'big_dataset' / 'big_preprocessed_split' / "val.csv"
+MODEL_PATH = data_dir  / 'medium_dataset' / "models" / "advanced_model.joblib"
+RESULTS_PATH = data_dir  / 'medium_dataset' / "results" / "advanced_model_metrics.txt"
 
 SAMPLE_SIZE = 6821441
 MAX_FEATURES = 30000
 MIN_DF = 5
 NGRAM_RANGE = (1, 2)
 C_VALUE = 0.5
-CHUNK_SIZE = 50000
+CHUNK_SIZE = 20000
 
 FAKE_LABELS = {
-    "fake", "conspiracy", "hate", "junksci", "unreliable", "bias", "satire", "political", "clickbait"
+    "fake", "conspiracy", "hate", "junksci", "unreliable",
+    "bias", "satire", "political", "clickbait", "rumor", "unknown"
 }
 
 REAL_LABELS = {
@@ -55,29 +56,29 @@ def prepare_df(df, text_col="content", label_col="type"):
 def load_data_chunked(file_path, sample_size=None, text_col="content", label_col="type"):
     """Load CSV in chunks to avoid memory issues with large files."""
     print(f"Loading data from {file_path} in chunks...")
-    
+
     chunks = []
     total_rows = 0
-    
+
     for chunk in pd.read_csv(file_path, chunksize=CHUNK_SIZE, low_memory=False):
         chunk = prepare_df(chunk, text_col=text_col, label_col=label_col)
         chunks.append(chunk)
         total_rows += len(chunk)
-        
+
         if sample_size and total_rows >= sample_size:
             print(f"Reached sample size limit: {total_rows} rows")
             break
-        
+
         if len(chunks) % 10 == 0:
             print(f"  Loaded {total_rows:,} rows so far...")
-    
+
     print(f"Concatenating {len(chunks)} chunks...")
     df = pd.concat(chunks, ignore_index=True)
-    
+
     if sample_size and len(df) > sample_size:
         print(f"Sampling {sample_size} rows from {len(df)} total...")
         df = df.sample(n=sample_size, random_state=42)
-    
+
     print(f"Final dataset: {len(df):,} rows")
     return df
 
@@ -85,12 +86,12 @@ def load_data_chunked(file_path, sample_size=None, text_col="content", label_col
 def main():
     # Load data in chunks to handle large files
     train_df = load_data_chunked(
-        TRAIN_PATH, 
+        TRAIN_PATH,
         sample_size=SAMPLE_SIZE,
         text_col="content",
         label_col="type"
     )
-    
+
     # Validation set can be loaded normally if it's smaller
     # Or use chunked loading if val is also very large
     print(f"\nLoading validation data...")
@@ -115,8 +116,8 @@ def main():
             min_df=MIN_DF,
             ngram_range=NGRAM_RANGE,
             sublinear_tf=True,
-            smooth_idf=True,
-            stop_words="english"
+            smooth_idf=True
+            # stop_words="english"
         )),
         ("clf", LinearSVC(C=C_VALUE, random_state=42, max_iter=2000, verbose=1))
     ])
