@@ -20,13 +20,14 @@ FAKE_LABELS = {
 REAL_LABELS = {"reliable"}
 LIAR_FAKE_LABELS = {'false', 'pants-fire', 'barely-true', 'half-true', 'mostly-true'}
 LIAR_REAL_LABELS = {'true'}
+_LIAR_cols = ['id', 'type', 'content', '4','5','6','7','8','9','10','11','12','13','14']
 idf = pd.read_csv(
     _IDF_PATH,
     usecols=['term','idf'],
     low_memory=False,
     na_filter=False
 )
-_LIAR_cols = ['id', 'type', 'content', '4','5','6','7','8','9','10','11','12','13','14']
+
 
 vocab_idx = {word: i for i, word in enumerate(idf['term'])}
 idf_array = idf['idf'].values
