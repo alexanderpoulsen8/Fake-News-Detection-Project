@@ -10,7 +10,7 @@ import joblib
 start_path = Path.cwd().parents[2]
 data_dir = start_path / 'data' / 'big_dataset'
 _TRAIN_PATH = data_dir / 'big_preprocessed_split' / 'train.csv'
-_OUTPUT_MODEL_PATH = data_dir / 'models' / 'squared_hinge_SGDClassifier.joblib'
+_OUTPUT_MODEL_PATH = data_dir / 'models' / 'SGDClassifier.joblib'
 
 
 _BUFFER_SIZE = 700_000
@@ -69,7 +69,7 @@ def train_SGDClassifier(
     print('Preparing SGDClassifier and reader...')
 
     clf = SGDClassifier(
-        loss='squared_hinge',
+        loss='hinge',
         penalty='l2',
         alpha=1e-7,
         learning_rate='constant',

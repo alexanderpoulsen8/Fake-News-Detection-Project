@@ -6,8 +6,8 @@ import joblib
 start_path = Path.cwd().parents[2]
 data_dir = start_path / 'data' / 'big_dataset'
 _VAL_PATH = data_dir / 'big_preprocessed_split' / 'val.csv'
-_MODEL_PATH = data_dir / 'models' / 'squared_hinge_SGDClassifier.joblib'
-_OUTPUT_RESULTS_PATH = data_dir / 'results' / 'squared_hinge_SGDClassifier_metrics.txt'
+_MODEL_PATH = data_dir / 'models' / 'SGDClassifier.joblib'
+_OUTPUT_RESULTS_PATH = data_dir / 'results' / 'SGDClassifier_metrics.txt'
 
 def main(
     val_path=_VAL_PATH,
