@@ -14,7 +14,8 @@ _OUTPUT_Y_TRUE_PATH = data_dir / 'tf_idf' / 'y_true_labels_training_set.csv'
 _CHUNKSIZE = 1000
 
 FAKE_LABELS = {
-    "fake", "conspiracy", "hate", "junksci", "unreliable", "bias", "satire", "political", "clickbait"
+    "fake", "conspiracy", "hate", "junksci", "unreliable",
+    "bias", "satire", "political", "clickbait", "rumor", "unknown"
 }
 REAL_LABELS = {"reliable"}
 

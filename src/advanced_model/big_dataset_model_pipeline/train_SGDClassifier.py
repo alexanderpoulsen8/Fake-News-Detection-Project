@@ -69,16 +69,16 @@ def train_SGDClassifier(
     print('Preparing SGDClassifier and reader...')
 
     clf = SGDClassifier(
-        loss='modified_huber',
+        loss='hinge',
         penalty='l2',
-        alpha=5e-7,
+        alpha=1e-7,
         learning_rate='constant',
-        eta0=0.002,
+        eta0=0.001,
         fit_intercept=True,
         max_iter=1,
         tol=None,
         shuffle=False,
-        average=False,
+        average=True,
         class_weight=class_weight_dict,
         random_state=42
     )
