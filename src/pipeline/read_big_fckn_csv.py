@@ -16,7 +16,7 @@ def process_chunk(chunk):
 def preprocess_large_csv(input_path, output_path, chunksize=100000, n_workers=None):
     """
     Preprocess a large CSV file in parallel using multiprocessing.
-    
+
     Args:
         input_path: Path to input CSV file
         output_path: Path to save preprocessed CSV
@@ -25,13 +25,13 @@ def preprocess_large_csv(input_path, output_path, chunksize=100000, n_workers=No
     """
     if n_workers is None:
         n_workers = max(cpu_count() - 1, 1)
-    
+
     print(f"Preprocessing {input_path}...")
     print(f"Using {n_workers} CPU cores, chunk size: {chunksize}")
-    
+
     # Read column names
     cols = pd.read_csv(input_path, nrows=0).columns.tolist()
-    
+
     # Initialize output file with headers
     pd.DataFrame(columns=cols).to_csv(output_path, index=False)
     print("✓ Initialized output file")
@@ -59,7 +59,7 @@ def preprocess_large_csv(input_path, output_path, chunksize=100000, n_workers=No
                 index=False
             )
             chunk_count = i
-    
+
     print(f"✓ Preprocessing complete! Processed {chunk_count} chunks")
     print(f"✓ Saved to {output_path}")
 

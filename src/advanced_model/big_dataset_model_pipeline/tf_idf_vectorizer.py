@@ -18,13 +18,16 @@ FAKE_LABELS = {
     "bias", "satire", "political", "clickbait", "rumor", "unknown"
 }
 REAL_LABELS = {"reliable"}
-
+LIAR_FAKE_LABELS = {'false', 'pants-fire', 'barely-true', 'half-true', 'mostly-true'}
+LIAR_REAL_LABELS = {'true'}
 idf = pd.read_csv(
     _IDF_PATH,
     usecols=['term','idf'],
     low_memory=False,
     na_filter=False
 )
+_LIAR_cols = ['id', 'type', 'content', '4','5','6','7','8','9','10','11','12','13','14']
+
 vocab_idx = {word: i for i, word in enumerate(idf['term'])}
 idf_array = idf['idf'].values
 
@@ -39,6 +42,15 @@ def map_label(label):
         return 0
     return None
 
+def map_LIAR_label(label):
+    if pd.isna(label):
+        return None
+    label = str(label).strip().lower()
+    if label in LIAR_FAKE_LABELS:
+        return 1
+    if label in LIAR_REAL_LABELS:
+        return 0
+    return None
 
 def prepare_df(df):
     text_col = "content"
@@ -67,6 +79,35 @@ def prepare_df_return_only_labels(df):
     df = df.dropna(subset=["label"])
     df["label"] = df["label"].astype(int)
     return df['label']
+
+def prepare_LIAR_df(df):
+    text_col = "content"
+    label_col = "type"
+    required_cols = [text_col, label_col]
+    missing = [col for col in required_cols if col not in df.columns]
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
+
+    df = df.dropna(subset=[text_col, label_col])
+    df["label"] = df[label_col].apply(map_LIAR_label)
+    df = df.dropna(subset=["label"])
+    df["label"] = df["label"].astype(int)
+    return df
+
+def prepare_LIAR_df_return_only_labels(df):
+    text_col = "content"
+    label_col = "type"
+    required_cols = [text_col, label_col]
+    missing = [col for col in required_cols if col not in df.columns]
+    if missing:
+        raise ValueError(f"Missing required columns: {missing}")
+
+    df = df.dropna(subset=[text_col, label_col])
+    df["label"] = df[label_col].apply(map_LIAR_label)
+    df = df.dropna(subset=["label"])
+    df["label"] = df["label"].astype(int)
+    return df['label']
+
 
 def vectorize_doc(tokens, ngram_range=(1,2), sublinear=True):
     def get_ngrams(tokens):
@@ -127,6 +168,24 @@ def vectorize_chunk(chunk):
         chunk['label']
     )
 
+def vectorize_LIAR_chunk(chunk):
+    chunk = prepare_LIAR_df(chunk)
+    chunk['content'] = chunk['content'].str.split(' ')
+
+    rows, cols, data = [], [], []
+
+    for i, doc in enumerate(chunk['content']):
+        indices, values = vectorize_doc(doc)
+
+        rows.extend([i] * len(indices))
+        cols.extend(indices)
+        data.extend(values)
+
+    return (
+        csr_matrix((data, (rows, cols)), shape=(len(chunk), len(vocab_idx))),
+        chunk['label']
+    )
+
 def vectorize_chunk_only_articles(chunk):
     chunk = prepare_df(chunk)
     chunk['content'] = chunk['content'].str.split(' ')
@@ -154,13 +213,23 @@ def vectorize_articles(
 ):
     print('\nidf and vocab index map are stored as global variables.')
     print('\nProcessing articles in training set...')
-    reader = pd.read_csv(
-        articles_filepath,
-        usecols=['content', 'type'],
-        chunksize=chunksize,
-        low_memory=False,
-        sep='\t' if LIAR else ','
-    )
+    if LIAR:
+        reader = pd.read_csv(
+            articles_filepath,
+            usecols=['content', 'type'],
+            chunksize=chunksize,
+            header=None,
+            names=_LIAR_cols,
+            low_memory=False,
+            sep='\t'
+        )
+    else:
+        reader = pd.read_csv(
+            articles_filepath,
+            usecols=['content', 'type'],
+            chunksize=chunksize,
+            low_memory=False,
+        )
     total_articles = 0
     chunks = []
     y_true = []
@@ -169,11 +238,24 @@ def vectorize_articles(
         if n_workers == None:
             n_workers = max(cpu_count() - 1, 1)
         with Pool(n_workers) as pool:
-            for i, (X, y) in enumerate(pool.imap(vectorize_chunk, reader, chunksize=1), 1):
-                total_articles += len(y)
-                chunks.append(X)
-                y_true.append(y)
-                print(f'Vectorized {i:,} chunks = {total_articles:,} articles')
+            if LIAR:
+                for i, (X, y) in enumerate(
+                    pool.imap(vectorize_LIAR_chunk, reader, chunksize=1),
+                    1
+                ):
+                    total_articles += len(y)
+                    chunks.append(X)
+                    y_true.append(y)
+                    print(f'Vectorized {i:,} chunks = {total_articles:,} articles')
+            else:
+                for i, (X, y) in enumerate(
+                    pool.imap(vectorize_chunk, reader, chunksize=1),
+                    1
+                ):
+                    total_articles += len(y)
+                    chunks.append(X)
+                    y_true.append(y)
+                    print(f'Vectorized {i:,} chunks = {total_articles:,} articles')
     else:
         for i, (X, y) in enumerate(map(vectorize_chunk, reader), 1):
             total_articles += len(y)
