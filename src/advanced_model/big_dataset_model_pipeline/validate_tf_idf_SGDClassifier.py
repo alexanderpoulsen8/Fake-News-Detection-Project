@@ -4,8 +4,8 @@ from pathlib import Path
 import joblib
 
 start_path = Path.cwd().parents[2]
-data_dir = start_path / 'data' / 'big_dataset'
-_VAL_PATH = data_dir / 'big_preprocessed_split' / 'val.csv'
+data_dir = start_path / 'data' / 'medium_dataset'
+_VAL_PATH = data_dir / 'preprocessed_dataset.csv'
 _MODEL_PATH = data_dir / 'models' / 'SGDClassifier.joblib'
 _OUTPUT_RESULTS_PATH = data_dir / 'results' / 'SGDClassifier_metrics.txt'
 
@@ -38,16 +38,16 @@ def main(
         f.write("  sublinear_tf=True\n")
         f.write("  smooth_idf=True\n")
         f.write("SGDClassifier config:\n")
-        f.write(f"  loss='modified_huber'\n")
+        f.write(f"  loss='hinge'\n")
         f.write(f"  penalty='l2'\n")
-        f.write(f"  alpha=5e-7\n")
+        f.write(f"  alpha=1e-7\n")
         f.write(f"  learning_rate='constant'\n")
-        f.write(f"  eta0=0.002\n")
+        f.write(f"  eta0=0.001\n")
         f.write(f"  fit_intercept=True\n")
         f.write(f"  max_iter=1\n")
         f.write(f"  tol=None\n")
         f.write(f"  shuffle=False\n")
-        f.write(f"  average=False\n")
+        f.write(f"  average=True\n")
         f.write(f"  class_weight=class_weight_dict (class_weight_dict computed manually in train_SGDClassifier.py)\n\n")
         f.write(report)
     print(f"Saved results to {output_path}")

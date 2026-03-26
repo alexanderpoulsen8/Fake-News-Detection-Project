@@ -8,8 +8,9 @@ import ast
 import pickle
 from pathlib import Path
 
-StartPath = Path.cwd()
-DATA_DIR = StartPath / "data"
+StartPath = Path.cwd().parents[0]
+DATA_DIR = StartPath / "data" / "LIAR"
+MODEL_PATH = DATA_DIR / 'models' / 'logistic_model.pkl'
 
 TOP_K_WORDS = 10000
 
@@ -17,7 +18,30 @@ FAKE_LABELS = {
     "fake", "conspiracy", "hate", "junksci", "unreliable",
     "bias", "satire", "political", "clickbait", "rumor", "unknown"
 }
-TRUE_LABELS = {'reliable'}
+TRUE_LABELS = {"reliable"}
+LIAR_FAKE_LABELS = {'false', 'pants-fire', 'barely-true', 'half-true', 'mostly-true'}
+LIAR_TRUE_LABELS = {'true'}
+_LIAR_cols = ['id', 'type', 'content', '4','5','6','7','8','9','10','11','12','13','14']
+
+def load_LIAR_data(split):
+    """Load train/val/test split and create binary labels."""
+    print(f"Loading {split} data...")
+    df = pd.read_csv(
+        f"{DATA_DIR}/{split}.tsv",
+        usecols=['content', 'type'],
+        header=None,
+        names=_LIAR_cols,
+        low_memory=False,
+        sep='\t'
+    )
+    df = df.dropna(subset=['content', 'type'])
+
+    df['label'] = df['type'].apply(
+        lambda x: 0 if x in LIAR_FAKE_LABELS else (1 if x in LIAR_TRUE_LABELS else -1)
+    )
+    df = df[df['label'] != -1]
+
+    return df[['content', 'label']]
 
 
 def load_data(split):
@@ -39,7 +63,7 @@ def load_vocabulary():
 
     Note: Vocabulary must be built separately using scripts/build_vocab_from_stats.py
     """
-    vocab_file = DATA_DIR / f"top_{TOP_K_WORDS}_vocab.pkl"
+    vocab_file = DATA_DIR / "models" / f"top_{TOP_K_WORDS}_vocab.pkl"
 
     if not vocab_file.exists():
         raise FileNotFoundError(
@@ -76,10 +100,10 @@ def create_features(df, vocab):
     return X.tocsr()
 
 
-def main():
-    train_df = load_data('train')
-    val_df = load_data('val')
-    test_df = load_data('test')
+def main(LIAR=False):
+    train_df = load_LIAR_data('train') if LIAR else load_data('train')
+    val_df = load_LIAR_data('valid') if LIAR else load_data('val')
+    test_df = load_LIAR_data('test') if LIAR else load_data('test')
 
     vocab = load_vocabulary()
 
@@ -93,8 +117,7 @@ def main():
     y_test = test_df['label'].values
 
     print("\nTraining logistic regression...")
-    model = LogisticRegression(max_iter=5000, random_state=42, verbose=1)
-    model.fit(X_train, y_train)
+    model = pickle.load(open(MODEL_PATH, 'rb'))
 
     print("\nValidation Results:")
     y_val_pred = model.predict(X_val)
@@ -106,11 +129,6 @@ def main():
     print(f"F1 Score: {f1_score(y_test, y_test_pred):.4f}")
     print(classification_report(y_test, y_test_pred, target_names=['FAKE', 'TRUE']))
 
-    with open(DATA_DIR / "logistic_model.pkl", 'wb') as f:
-        pickle.dump(model, f)
-
-    print("\nModel saved!")
-
 
 if __name__ == "__main__":
-    main()
+    main(LIAR=True)
