@@ -56,7 +56,16 @@ To run the model, follow these steps:
 │   ├── descriptive_stats
 │   ├── pipeline
 │   ├── setup_nltk.py
-│   └── subset_test.py
+│   ├── subset_test.py
+│   └── advanced_model
+│        ├── __init__.py
+│        ├── evaluate_advanced_model.py
+│        ├── train_advanced_model.py
+│        ├── train_advanced_model_chunked.py
+│        └── big_dataset_model_pipeline
+│             ├── build_doc_freq_vector.py
+│             ├── df_to_idf.py
+│             ├──
 └── venv
     ├── bin
     ├── include
