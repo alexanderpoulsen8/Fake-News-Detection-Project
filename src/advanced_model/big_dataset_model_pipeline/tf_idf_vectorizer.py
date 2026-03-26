@@ -4,10 +4,25 @@ from collections import Counter
 from scipy.sparse import csr_matrix, vstack, save_npz
 from pathlib import Path
 
-start_path = Path.cwd().parents[2]
-data_dir = start_path / 'data' / 'big_dataset'
+# Prefer loading idf and other artifacts relative to this module if they exist
+module_dir = Path(__file__).resolve().parent
+
+# Project root is three levels up from this module: repo_root/src/advanced_model/... -> parents[3] == repo_root
+project_root = Path(__file__).resolve().parents[3]
+data_dir = project_root / 'data' / 'big_dataset'
+
 _TRAIN_PATH = data_dir / 'big_preprocessed_split' / 'train.csv'
-_IDF_PATH = data_dir / 'tf_idf' / 'idf_vector.csv'
+
+# Look for idf_vector.csv next to this module first, otherwise look in repo_root/data/models,
+# then fall back to data/big_dataset/tf_idf
+_IDF_PATH = module_dir / 'idf_vector.csv'
+if not _IDF_PATH.exists():
+    alt_path = project_root / 'data' / 'models' / 'idf_vector.csv'
+    if alt_path.exists():
+        _IDF_PATH = alt_path
+    else:
+        _IDF_PATH = data_dir / 'tf_idf' / 'idf_vector.csv'
+
 _OUTPUT_MATRIX_PATH = data_dir / 'tf_idf' / 'vectorized_training_set.npz'
 _OUTPUT_Y_TRUE_PATH = data_dir / 'tf_idf' / 'y_true_labels_training_set.csv'
 

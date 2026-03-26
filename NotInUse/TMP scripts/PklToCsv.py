@@ -1,6 +1,6 @@
 import pickle
 import pandas as pd
-
+# Script brugt til at conventere pkl filerne så vi kunne visualisere dem og kigge manuelt efter fejl
 pkl_file = r"C:\Users\jespe\GDS eksamen\Fake-News-Detection-Project\data\top_10000_vocab.pkl"
 csv_file = r"C:\Users\jespe\GDS eksamen\Fake-News-Detection-Project\data\top_10000_vocab.csv"
 
