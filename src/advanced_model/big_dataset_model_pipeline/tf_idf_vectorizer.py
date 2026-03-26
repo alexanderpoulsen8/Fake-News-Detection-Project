@@ -23,9 +23,6 @@ if not _IDF_PATH.exists():
     else:
         _IDF_PATH = data_dir / 'tf_idf' / 'idf_vector.csv'
 
-_OUTPUT_MATRIX_PATH = data_dir / 'tf_idf' / 'vectorized_training_set.npz'
-_OUTPUT_Y_TRUE_PATH = data_dir / 'tf_idf' / 'y_true_labels_training_set.csv'
-
 _CHUNKSIZE = 1000
 
 FAKE_LABELS = {
@@ -49,6 +46,9 @@ idf_array = idf['idf'].values
 
 
 def map_label(label):
+    '''
+    Helper function for prepare_df
+    '''
     if pd.isna(label):
         return None
     label = str(label).strip().lower()
@@ -59,6 +59,9 @@ def map_label(label):
     return None
 
 def map_LIAR_label(label):
+    '''
+    Helper function for prepare_LIAR_df
+    '''
     if pd.isna(label):
         return None
     label = str(label).strip().lower()
@@ -69,6 +72,10 @@ def map_LIAR_label(label):
     return None
 
 def prepare_df(df):
+    '''
+    Used to binarize article labels as well any articles with
+    missing necessary data, i.e. content or type
+    '''
     text_col = "content"
     label_col = "type"
     required_cols = [text_col, label_col]
@@ -81,22 +88,12 @@ def prepare_df(df):
     df = df.dropna(subset=["label"])
     df["label"] = df["label"].astype(int)
     return df
-
-def prepare_df_return_only_labels(df):
-    text_col = "content"
-    label_col = "type"
-    required_cols = [text_col, label_col]
-    missing = [col for col in required_cols if col not in df.columns]
-    if missing:
-        raise ValueError(f"Missing required columns: {missing}")
-
-    df = df.dropna(subset=[text_col, label_col])
-    df["label"] = df[label_col].apply(map_label)
-    df = df.dropna(subset=["label"])
-    df["label"] = df["label"].astype(int)
-    return df['label']
 
 def prepare_LIAR_df(df):
+    '''
+    Helper function used specifically when LIAR is passed as
+    True in vectorize_articles function
+    '''
     text_col = "content"
     label_col = "type"
     required_cols = [text_col, label_col]
@@ -110,7 +107,12 @@ def prepare_LIAR_df(df):
     df["label"] = df["label"].astype(int)
     return df
 
-def prepare_LIAR_df_return_only_labels(df):
+
+def prepare_df_return_only_labels(df):
+    '''
+    Helper function that was used for vectorize_only_articles and
+    save_y_true_vector
+    '''
     text_col = "content"
     label_col = "type"
     required_cols = [text_col, label_col]
@@ -119,13 +121,16 @@ def prepare_LIAR_df_return_only_labels(df):
         raise ValueError(f"Missing required columns: {missing}")
 
     df = df.dropna(subset=[text_col, label_col])
-    df["label"] = df[label_col].apply(map_LIAR_label)
+    df["label"] = df[label_col].apply(map_label)
     df = df.dropna(subset=["label"])
     df["label"] = df["label"].astype(int)
     return df['label']
 
-
 def vectorize_doc(tokens, ngram_range=(1,2), sublinear=True):
+    '''
+    Helper function for vectorize_chunk to make debugging and clarity
+    of correctness easier
+    '''
     def get_ngrams(tokens):
         min_n, max_n = ngram_range
         result = []
@@ -167,6 +172,11 @@ def vectorize_doc(tokens, ngram_range=(1,2), sublinear=True):
 
 
 def vectorize_chunk(chunk):
+    '''
+    Used as both a helper function for vectorize_articles, as well as
+    function to stream vectorized articles to SGDClassifier with
+    partial fitting.
+    '''
     chunk = prepare_df(chunk)
     chunk['content'] = chunk['content'].str.split(' ')
 
@@ -185,6 +195,10 @@ def vectorize_chunk(chunk):
     )
 
 def vectorize_LIAR_chunk(chunk):
+    '''
+    Used as a helper function to vectorize_articles when LIAR is
+    passed as True
+    '''
     chunk = prepare_LIAR_df(chunk)
     chunk['content'] = chunk['content'].str.split(' ')
 
@@ -203,6 +217,14 @@ def vectorize_LIAR_chunk(chunk):
     )
 
 def vectorize_chunk_only_articles(chunk):
+    '''
+    Only used for testing whether using LinearSVC by creating
+    the whole TF-IDF matrix and then fitting the model with it.
+    It was useful for saving memory by separating label vector from
+    matrix, but ended up not using it due to storing the whole
+    matrix in memory not being scalable with a sufficiently
+    dense matrix.
+    '''
     chunk = prepare_df(chunk)
     chunk['content'] = chunk['content'].str.split(' ')
 
@@ -227,6 +249,10 @@ def vectorize_articles(
     multiprocessing=True,
     LIAR=False
 ):
+    '''
+    Used for easily vectorizing data sets that are small enough
+    to be stored in memory in sparse-matrix form
+    '''
     print('\nidf and vocab index map are stored as global variables.')
     print('\nProcessing articles in training set...')
     if LIAR:
@@ -291,6 +317,14 @@ def vectorize_only_articles(
     chunksize=_CHUNKSIZE,
     multiprocessing=True,
 ):
+    '''
+    Only used for testing whether using LinearSVC by creating
+    the whole TF-IDF matrix and then fitting the model with it.
+    It was useful for saving memory by separating label vector from
+    matrix, but ended up not using it due to storing the whole
+    matrix in memory not being scalable with a sufficiently
+    dense matrix.
+    '''
     print('\nidf and vocab index map are stored as global variables.')
     print('\nProcessing articles in training set...')
     reader = pd.read_csv(
@@ -325,6 +359,14 @@ def save_y_true_vector(
     chunksize=_CHUNKSIZE,
     multiprocessing=True,
 ):
+    '''
+    Only used for testing whether using LinearSVC by creating
+    the whole TF-IDF matrix and then fitting the model with it.
+    It was useful for saving memory by separating label vector from
+    matrix, but ended up not using it due to storing the whole
+    matrix in memory not being scalable with a sufficiently
+    dense matrix.
+    '''
     print('\nidf and vocab index map are stored as global variables.')
     print('\nProcessing articles in training set...')
     reader = pd.read_csv(

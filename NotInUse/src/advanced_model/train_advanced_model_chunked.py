@@ -117,6 +117,7 @@ def main():
             ngram_range=NGRAM_RANGE,
             sublinear_tf=True,
             smooth_idf=True
+            # stop_words="english"
         )),
         ("clf", LinearSVC(C=C_VALUE, random_state=42, max_iter=2000, verbose=1))
     ])
