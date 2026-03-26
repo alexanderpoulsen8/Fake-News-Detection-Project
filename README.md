@@ -65,7 +65,12 @@ To run the model, follow these steps:
 │        └── big_dataset_model_pipeline
 │             ├── build_doc_freq_vector.py
 │             ├── df_to_idf.py
-│             ├──
+│             ├── LIAR_validate_tf_idf_SGDClassifier.py
+│             ├── prune_ngrams_from_df.py
+│             ├── strict_prun_ngrams_from_df.py
+│             ├── tf_idf_vectorizer.py
+│             ├── train_SGDClassifier.py
+│             └── validate_tf_idf_SGDClassifier.py
 └── venv
     ├── bin
     ├── include
