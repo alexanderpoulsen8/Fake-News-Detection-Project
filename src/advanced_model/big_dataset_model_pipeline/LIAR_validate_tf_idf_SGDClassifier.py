@@ -3,9 +3,9 @@ from sklearn.metrics import f1_score, classification_report
 from pathlib import Path
 import joblib
 
-start_path = Path.cwd().parents[2]
-data_dir = start_path / 'data' / 'LIAR'
-_VAL_PATH = data_dir / 'valid.tsv'
+start_path = Path.cwd()
+data_dir = start_path / 'data'
+_VAL_PATH = data_dir / "liar" / "liar_dataset" / 'liar_dataset_combined.tsv'
 _MODEL_PATH = data_dir / 'models' / 'SGDClassifier.joblib'
 _OUTPUT_RESULTS_PATH = data_dir / 'results' / 'SGDClassifier_metrics.txt'
 
