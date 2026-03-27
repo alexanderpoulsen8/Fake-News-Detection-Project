@@ -30,16 +30,30 @@ To run the model, follow these steps:
 │   ├── CheckRows.py
 │   └── PklToCsv.py
 ├── data
-│   ├── liar
-│   ├── logistic_model.pkl
+│   ├── big_dataset
+│   │    ├── train.csv
+│   │    ├── val.csv
+│   │    ├── test.csv
+│   │    └── tf_idf
+│   │         ├── big_doc_freq_vector.csv
+│   │         ├── big_pruned_doc_freq_vector.csv
+│   │         ├── big_strict_pruned_doc_freq_vector.csv
+│   │         └── idf_vector.csv
+│   ├── LIAR
+│   │    ├── train.tsv
+│   │    ├── valid.tsv
+│   │    ├── test.tsv
+│   │    └── LIAR_dataset_combined.tsv
+│   ├── small_dataset
+│   │    ├── train.csv
+│   │    ├── val.csv
+│   │    └── test.csv
 │   ├── models
-│   ├── processed
+│   │    ├── logistic_model.pkl
+│   │    ├── SGDClassifier.joblib
+│   │    ├── LinearSVC.joblib
 │   ├── results
-│   ├── test.csv
-│   ├── tmp.csv
 │   ├── top_10000_vocab.pkl
-│   ├── train.csv
-│   ├── val.csv
 │   ├── vocab.pkl
 │   └── vocabulary.csv
 ├── docs

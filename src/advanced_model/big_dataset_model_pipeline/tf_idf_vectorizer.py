@@ -11,11 +11,11 @@ module_dir = Path(__file__).resolve().parent
 project_root = Path(__file__).resolve().parents[3]
 data_dir = project_root / 'data' / 'big_dataset'
 
-_TRAIN_PATH = data_dir / 'big_preprocessed_split' / 'train.csv'
+_TRAIN_PATH = data_dir / 'train.csv'
 
 # Look for idf_vector.csv next to this module first, otherwise look in repo_root/data/models,
 # then fall back to data/big_dataset/tf_idf
-_IDF_PATH = module_dir / 'idf_vector.csv'
+_IDF_PATH = data_dir / 'tf_idf' / 'idf_vector.csv'
 if not _IDF_PATH.exists():
     alt_path = project_root / 'data' / 'models' / 'idf_vector.csv'
     if alt_path.exists():
