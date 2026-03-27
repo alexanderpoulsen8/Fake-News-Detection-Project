@@ -20,6 +20,8 @@ To run the model, follow these steps:
 4. View the results:
    - The script will output the results to the console in the form of ```scikit-learn```'s ```Classification report``` and save them in the `results/` directory.
 
+The file structure of this repository is as follows:
+
 ```
 ├── Notebooks_CSV_analysis
 │   ├── bigdata
