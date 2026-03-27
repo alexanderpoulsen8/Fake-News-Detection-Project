@@ -9,7 +9,7 @@ import joblib
 
 start_path = Path.cwd().parents[2]
 data_dir = start_path / 'data' / 'big_dataset'
-_TRAIN_PATH = data_dir / 'big_preprocessed_split' / 'train.csv'
+_TRAIN_PATH = data_dir / 'train.csv'
 _OUTPUT_MODEL_PATH = data_dir / 'models' / 'SGDClassifier.joblib'
 
 
