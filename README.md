@@ -12,81 +12,50 @@ To run the model, follow these steps:
    (or use our virtual environment).
 
 2. Prepare your dataset:
-   - Make sure to have the 995k subset (and the full dataset if you wish to run it) in the same directory on your machine. On line xxx in ```main.py```, you can specify the path to the directory which contains the data. Please note that the file names must match the expected format.
+   - Make sure to have the 995k subset, the full Fake News Corpus dataset, and the LIAR set all in the same directory on your machine. All of the executive scripts throughout the repository uniquely specify directory paths of input data, output data and trained model files (```.joblib``` files). Make sure to specify these directory paths properly when running the scripts.
 
 3. Run the model:
-   - From the root directory of the project, run
-   ```
-   python3 main.py
-   ```
+   - To run the models presented in this project, please see the ```src/``` directory. Scripts for training and evaluating both our logistic regression model and our advanved SGDClassifier are found here. Make sure to specify proper directory paths. Simply specify which dataset you wish to train, test and validate your data on and run the code.
 
 4. View the results:
-   - The script will output the results to the console and save them in the `results/` directory.
+   - The script will output the results to the console in the form of ```scikit-learn```'s ```Classification report``` and save them in the `results/` directory.
 
 ```
 ├── Grouping.txt
+├── Notebooks_CSV_analysis
+│   ├── bigdata
+│   └── smalldata
 ├── README.md
-├── TMP scripts
-│   ├── CheckRows.py
-│   └── PklToCsv.py
 ├── data
-│   ├── big_dataset
-│   │    ├── train.csv
-│   │    ├── val.csv
-│   │    ├── test.csv
-│   │    └── tf_idf
-│   │         ├── big_doc_freq_vector.csv
-│   │         ├── big_pruned_doc_freq_vector.csv
-│   │         ├── big_strict_pruned_doc_freq_vector.csv
-│   │         └── idf_vector.csv
-│   ├── LIAR
-│   │    ├── train.tsv
-│   │    ├── valid.tsv
-│   │    ├── test.tsv
-│   │    └── LIAR_dataset_combined.tsv
-│   ├── small_dataset
-│   │    ├── train.csv
-│   │    ├── val.csv
-│   │    └── test.csv
+│   ├── liar
 │   ├── models
-│   │    ├── logistic_model.pkl
-│   │    ├── SGDClassifier.joblib
-│   │    └── LinearSVC.joblib
+│   ├── processed
 │   ├── results
+│   ├── temp.txt
+│   ├── test.csv
+│   ├── tmp.csv
 │   ├── top_10000_vocab.pkl
+│   ├── train.csv
+│   ├── val.csv
 │   ├── vocab.pkl
 │   └── vocabulary.csv
 ├── docs
 │   ├── p1_data_processing.ipynb
 │   ├── preprocessing.py
-|   └── print_top_100_words.py
+│   └── print_top_100_words.py
 ├── requirements.txt
-├── requirements_new.txt
+├── results
+│   ├── $advanced_model_liar_confusion_matrix.csv
+│   ├── advanced_model_liar_confusion_matrix.csv
+│   └── advanced_model_liar_metrics.txt
 ├── src
-│   ├── Advanced_Main.py
 │   ├── Simple_Main.py
-│   ├── setup_nltk.py
+│   ├── advanced_model
+│   ├── descriptive_stats
+│   ├── graveyard
 │   ├── pipeline
-│   │    ├── data_splitter.py
-│   │    ├── model_trainer.py
-│   │    ├── news_sample.csv
-│   │    ├── preprocess_with_duckdb.py
-│   │    ├── preprocessing.py
-│   │    └── vocab_builder.py
-│   └── advanced_model
-│        ├── __init__.py
-│        ├── evaluate_advanced_model.py
-│        ├── train_advanced_model.py
-│        ├── train_advanced_model_chunked.py
-│        └── big_dataset_model_pipeline
-│             ├── build_doc_freq_vector.py
-│             ├── df_to_idf.py
-│             ├── LIAR_validate_tf_idf_SGDClassifier.py
-│             ├── prune_ngrams_from_df.py
-│             ├── strict_prun_ngrams_from_df.py
-│             ├── tf_idf_vectorizer.py
-│             ├── train_SGDClassifier.py
-│             └── validate_tf_idf_SGDClassifier.py
+│   ├── setup_nltk.py
+│   └── validate_simple_model.py
 └── venv
     ├── bin
     ├── include
