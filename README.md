@@ -21,7 +21,6 @@ To run the model, follow these steps:
    - The script will output the results to the console in the form of ```scikit-learn```'s ```Classification report``` and save them in the `results/` directory.
 
 ```
-├── Grouping.txt
 ├── Notebooks_CSV_analysis
 │   ├── bigdata
 │   └── smalldata
@@ -52,7 +51,6 @@ To run the model, follow these steps:
 │   ├── Simple_Main.py
 │   ├── advanced_model
 │   ├── descriptive_stats
-│   ├── graveyard
 │   ├── pipeline
 │   ├── setup_nltk.py
 │   └── validate_simple_model.py
