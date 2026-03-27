@@ -12,16 +12,13 @@ To run the model, follow these steps:
    (or use our virtual environment).
 
 2. Prepare your dataset:
-   - Make sure to have the 995k subset (and the full dataset if you wish to run it) in the same directory on your machine. On line xxx in ```main.py```, you can specify the path to the directory which contains the data. Please note that the file names must match the expected format.
+   - Make sure to have the 995k subset, the full Fake News Corpus dataset, and the LIAR set all in the same directory on your machine. All of the executive scripts throughout the repository uniquely specify directory paths of input data, output data and trained model files (.```.joblib``` files). Make sure to specify these directory paths properly when running the scripts.
 
 3. Run the model:
-   - From the root directory of the project, run
-   ```
-   python3 main.py
-   ```
+   - To run the models presented in this project, please see the ```src/``` directory. Scripts for training and evaluating both our logistic regression model and our advanved SGDClassifier are found here. Make sure to specify proper directory paths. Simply specify which dataset you wish to train, test and validate your data on and run the code.
 
 4. View the results:
-   - The script will output the results to the console and save them in the `results/` directory.
+   - The script will output the results to the console in the form of ```scikit-learn```'s ```Classification report``` and save them in the `results/` directory.
 
 ```
 ├── Grouping.txt
