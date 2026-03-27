@@ -51,7 +51,7 @@ To run the model, follow these steps:
 │   ├── models
 │   │    ├── logistic_model.pkl
 │   │    ├── SGDClassifier.joblib
-│   │    ├── LinearSVC.joblib
+│   │    └── LinearSVC.joblib
 │   ├── results
 │   ├── top_10000_vocab.pkl
 │   ├── vocab.pkl
